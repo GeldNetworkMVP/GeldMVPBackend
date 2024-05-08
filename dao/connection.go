@@ -6,7 +6,7 @@ import (
 )
 
 // Get db name from .env file
-var dbName = commons.GoDotEnvVariable("DB_NAME")
+var DbName = commons.GoDotEnvVariable("DB_NAME")
 
 /*
 Connection The Mgo Connection
@@ -15,6 +15,6 @@ Connection The Mgo Connection
 type Connection struct {
 }
 
-func (cd *Connection) connect() (mongo.Session, error) {
+func (cd *Connection) Connect() (mongo.Session, error) {
 	return commons.GetMongoSession()
 }

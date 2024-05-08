@@ -23,3 +23,8 @@ type StageFieldNames struct {
 	Field2 string
 	Field3 string
 }
+
+type WorkflowResponse struct {
+	WorkflowID string
+	Status     string
+}

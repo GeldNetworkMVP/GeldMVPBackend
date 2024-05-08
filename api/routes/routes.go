@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/dileepaj/tracified-gateway/api/businessFacade"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/api/businessFacade"
 )
 
 type Route struct {
