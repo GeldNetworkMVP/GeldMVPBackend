@@ -7,17 +7,14 @@ import (
 )
 
 func NewRouter() *mux.Router {
-
 	router := mux.NewRouter().StrictSlash(true)
-	for _, route := range routes {
-		var handler http.Handler
+	for _, route := range ApplicationRoutes {
 
-		handler = route.HandlerFunc
-		handler = Logger(handler, route.Name)
+		var handler http.Handler = route.Handler
 
 		router.
 			Methods(route.Method).
-			Path(route.Pattern).
+			Path(route.Path).
 			Name(route.Name).
 			Handler(handler)
 

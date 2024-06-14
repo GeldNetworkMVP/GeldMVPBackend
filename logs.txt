@@ -1,0 +1,1 @@
+2024/06/08 19:15:33 main.go:42 [INFO]-[QA] : Gateway Started @port :8000 with qa environment 

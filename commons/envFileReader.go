@@ -2,23 +2,23 @@ package commons
 
 import (
 	"os"
-	"sync"
 
 	"github.com/joho/godotenv"
 )
 
-var syncOnce sync.Once
-
 // use godot package to load/read the .env file and
 // return the value of the key
 func GoDotEnvVariable(key string) string {
-	// load .env file
-	syncOnce.Do(func() {
-		err := godotenv.Load(".env")
-		if err != nil {
-			//log.Fatalf("Error loading .env file")
-		}
-	})
-
+	godotenv.Load(".env")
 	return os.Getenv(key)
+}
+
+// ContainsString checks if a given string is present in the array.
+func ContainsString(array []string, target string) bool {
+	for _, value := range array {
+		if value == target {
+			return true
+		}
+	}
+	return false
 }
