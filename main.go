@@ -2,44 +2,35 @@ package main
 
 import (
 	"net/http"
-	"os"
 
-	"github.com/GeldNetworkMVP/GeldMVPBackend/api/routes"
-	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
-	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/configs"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/routes"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/handlers"
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
-func getPort() string {
-	p := os.Getenv("GATEWAY_PORT")
-	if p != "" {
-		return ":" + p
-	}
-	return ":8000"
-}
-
 func main() {
-	// godotenv package
-	envName := commons.GoDotEnvVariable("ENVIRONMENT")
-
-	// getEnvironment()
-	port := getPort()
+	logs.InfoLogger.Println("Tracified Backend")
+	err := godotenv.Load()
+	if err != nil {
+		logrus.Println("Info Issue with loading .env file")
+		logs.InfoLogger.Println("Info Issue with loading .env1 file")
+	}
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Token"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
+	// Start API
 	router := routes.NewRouter()
-	// serve swagger documentation
-	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
-	sh := middleware.SwaggerUI(opts, nil)
-	router.Handle("/docs", sh)
-	router.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-	// initial log file when server starts
-	utilities.CreateLogFile()
-	// create logger
-	logger := utilities.NewCustomLogger()
-	logger.LogWriter("Gateway Started @port "+port+" with "+envName+" environment", 1)
 
-	http.ListenAndServe(port, handlers.CORS(originsOk, headersOk, methodsOk)(router))
+	router.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml", Path: "api-docs"}
+	sh := middleware.SwaggerUI(opts, nil)
+	router.Handle("/api-docs", sh)
+
+	http.Handle("/api/", router)
+	logs.InfoLogger.Println("Gateway Started @port " + configs.GetPort() + " with " + configs.EnvName + " environment")
+	http.ListenAndServe(configs.GetPort(), handlers.CORS(originsOk, headersOk, methodsOk)(router))
 }
