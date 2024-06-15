@@ -17,20 +17,20 @@ import (
 /*
 	All functions here a triggered by api Calls and invokes respective BusinessFace Class Methods
 */
-//Retrevies data from the Json Body and decodes it into a model class (Workflow).Then the CreateWorkflow() method is invoked from BusinessFacade
-func CreateWorkflow(W http.ResponseWriter, r *http.Request) {
+//Retrevies data from the Json Body and decodes it into a model class (Stage).Then the CreateStage() method is invoked from BusinessFacade
+func CreateStage(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	var requestCreateWorkflow model.Workflows
+	var requestCreateStage model.Stages
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&requestCreateWorkflow)
+	err := decoder.Decode(&requestCreateStage)
 	if err != nil {
-		logs.ErrorLogger.Println("Error occured while decoding JSON in CreateWorkflow:workflowHandler: ", err.Error())
+		logs.ErrorLogger.Println("Error occured while decoding JSON in CreateStages:stagesHandler: ", err.Error())
 	}
-	err = validations.ValidateWorkflows(requestCreateWorkflow)
+	err = validations.ValidateStages(requestCreateStage)
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		result, err1 := businessFacade.CreateWorkflows(requestCreateWorkflow)
+		result, err1 := businessFacade.CreateStages(requestCreateStage)
 		if err1 != nil {
 			errors.BadRequest(W, err.Error())
 		} else {
@@ -39,23 +39,23 @@ func CreateWorkflow(W http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Trigger the GetWorkflowByID() method that will return The specific Workflow with the ID passed via the API
-func GetWorkflowsByID(w http.ResponseWriter, r *http.Request) {
+// Trigger the GetStageByID() method that will return The specific Stage with the ID passed via the API
+func GetStagesByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
-	result, err := businessFacade.GetWorkflowsByID(vars["_id"])
+	result, err := businessFacade.GetStagesByID(vars["_id"])
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[model.Workflows](w, result)
+		commonResponse.SuccessStatus[model.Stages](w, result)
 	}
 
 }
 
-// Trigger the UpdateWorkflow() method that will return The specific Workflow with the ID passed via the API
-func UpdateWorkflow(w http.ResponseWriter, r *http.Request) {
+// Trigger the UpdateStages() method that will return The specific updated Stage with the ID passed via the API
+func UpdateStages(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	var UpdateObject requestDtos.UpdateWorkflow
+	var UpdateObject requestDtos.UpdateStages
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&UpdateObject)
 	if err != nil {
@@ -63,12 +63,12 @@ func UpdateWorkflow(w http.ResponseWriter, r *http.Request) {
 		errors.BadRequest(w, err.Error())
 		return
 	} else {
-		result, err := businessFacade.UpdateWorkflow(UpdateObject)
+		result, err := businessFacade.UpdateStages(UpdateObject)
 		if err != nil {
-			logs.WarningLogger.Println("Failed to update workflow : ", err.Error())
+			logs.WarningLogger.Println("Failed to update stage : ", err.Error())
 			errors.BadRequest(w, err.Error())
 			return
 		}
-		commonResponse.SuccessStatus[model.Workflows](w, result)
+		commonResponse.SuccessStatus[model.Stages](w, result)
 	}
 }

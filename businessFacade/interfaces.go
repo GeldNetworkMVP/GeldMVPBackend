@@ -5,5 +5,7 @@ import (
 )
 
 var (
-	workflowRepository dataConfigRepository.WorkflowRepository
+	workflowRepository   dataConfigRepository.WorkflowRepository
+	stageRepository      dataConfigRepository.StageRepository
+	masterdataRepository dataConfigRepository.MasterDataRepository
 )

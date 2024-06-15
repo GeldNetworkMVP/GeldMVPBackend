@@ -10,7 +10,7 @@ import (
 )
 
 type resultType interface {
-	model.Workflows | string
+	model.Workflows | string | model.MasterData | model.Stages | model.DataCollection
 }
 
 func SuccessStatus[T resultType](w http.ResponseWriter, result T) {

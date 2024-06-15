@@ -1,15 +1,15 @@
-package model
+package requestDtos
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type MasterData struct {
-	DataID      primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	DataName    string             `json:"dataname" bson:"dataname"`
-	Description string             `json:"description" bson:"description"`
-	//DataCollection []DataCollection   `json:"dataCollection" bson:"dataCollection"`
+type UpdateMasterData struct {
+	DataID         primitive.ObjectID   `json:"_id" bson:"_id,omitempty"`
+	DataName       string               `json:"dataname" bson:"dataname"`
+	Description    string               `json:"description" bson:"description"`
+	DataCollection UpdateDataCollection `json:"dataCollection" bson:"dataCollection"`
 }
 
-type DataCollection struct {
+type UpdateDataCollection struct {
 	CollectionID   primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
 	DataID         string             `json:"dataid" bson:"dataid"`
 	CollectionName string             `json:"collectionname" bson:"collectionname"`
