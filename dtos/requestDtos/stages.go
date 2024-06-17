@@ -1,8 +1,8 @@
-package model
+package requestDtos
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type Stages struct {
+type UpdateStages struct {
 	StageID     primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
 	UserID      string             `json:"userid" bson:"userid"`
 	StageName   string             `json:"stagename" bson:"stagename"`
@@ -10,7 +10,10 @@ type Stages struct {
 	Fields      []string           `json:"fields" bson:"fields"`
 }
 
-type StagePaginatedresponse struct {
-	Content        []Stages `json:"content" bson:"content" validate:"required"`
-	PaginationInfo PaginationTemplate
+type StagesForMatrixView struct {
+	UserID        string `json:"userid" bson:"userid"`
+	PageSize      int32  `json:"pagesize" bson:"pagesize"`
+	RequestedPage int32  `json:"requestedPage" bson:"requestedPage" `
+	SortbyFeild   string `json:"sortbyfeild" bson:"sortbyfeild" `
+	SortType      int    `json:"sorttype" bson:"sorttype"`
 }
