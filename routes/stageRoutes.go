@@ -27,4 +27,18 @@ var StageRoutes = model.Routers{
 		Path:    "/updatestage",
 		Handler: apiModel.UpdateStages,
 	},
+	//Will delete Stage based on Stage ID provided
+	model.Router{
+		Name:    "Delete Stage by StageID",
+		Method:  "DELETE",
+		Path:    "/stage/remove/{_id}",
+		Handler: apiModel.DeleteStageByID,
+	},
+	//Will return stages based userid paginated response
+	model.Router{
+		Name:    "Get stage data  pagination",
+		Method:  "Get",
+		Path:    "/stage/{userid}",
+		Handler: apiModel.GetPaginatedStageData,
+	},
 }

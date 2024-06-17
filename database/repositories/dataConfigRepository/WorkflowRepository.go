@@ -60,3 +60,33 @@ func (r *WorkflowRepository) UpdateWorkflows(UpdateObject requestDtos.UpdateWork
 	}
 	return WorkflowUpdateResponse, nil
 }
+
+func (r *WorkflowRepository) DeleteWorkflow(workflowID string) error {
+	result, err := connections.GetSessionClient(Workflow).DeleteOne(context.TODO(), bson.M{"_id": workflowID})
+	if err != nil {
+		logs.ErrorLogger.Println("Error occured when Connecting to DB and executing DeleteOne Query in DeleteWorkflow(workflowRepository): ", err.Error())
+	}
+	logs.InfoLogger.Println("workflow deleted :", result.DeletedCount)
+	return err
+
+}
+
+func (r *WorkflowRepository) GetWorkflowDataPaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []model.Workflows, sort int) (model.WorkflowPaginatedresponse, error) {
+	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]model.Workflows](
+		filterConfig,
+		projectionData,
+		pagesize,
+		pageNo,
+		collectionName,
+		sortingFeildName,
+		data,
+		sort,
+	)
+	var response model.WorkflowPaginatedresponse
+	if err != nil {
+		return response, err
+	}
+	response.Content = contentResponse
+	response.PaginationInfo = paginationResponse
+	return response, nil
+}

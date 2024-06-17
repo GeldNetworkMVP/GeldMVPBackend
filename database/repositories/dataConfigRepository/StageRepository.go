@@ -60,3 +60,33 @@ func (r *StageRepository) UpdateStages(UpdateObject requestDtos.UpdateStages, up
 	}
 	return StagesUpdateResponse, nil
 }
+
+func (r *StageRepository) DeleteStage(stageID string) error {
+	result, err := connections.GetSessionClient(Stages).DeleteOne(context.TODO(), bson.M{"_id": stageID})
+	if err != nil {
+		logs.ErrorLogger.Println("Error occured when Connecting to DB and executing DeleteOne Query in DeleteStage(stageRepository): ", err.Error())
+	}
+	logs.InfoLogger.Println("stage deleted :", result.DeletedCount)
+	return err
+
+}
+
+func (r *StageRepository) GetStageDataPaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []model.Stages, sort int) (model.StagePaginatedresponse, error) {
+	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]model.Stages](
+		filterConfig,
+		projectionData,
+		pagesize,
+		pageNo,
+		collectionName,
+		sortingFeildName,
+		data,
+		sort,
+	)
+	var response model.StagePaginatedresponse
+	if err != nil {
+		return response, err
+	}
+	response.Content = contentResponse
+	response.PaginationInfo = paginationResponse
+	return response, nil
+}

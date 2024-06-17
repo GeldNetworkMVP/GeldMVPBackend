@@ -27,4 +27,18 @@ var WorkflowRoutes = model.Routers{
 		Path:    "/updateworkflow",
 		Handler: apiModel.UpdateWorkflow,
 	},
+	//Will delete Workflow based on Workflow ID provided
+	model.Router{
+		Name:    "Delete Workflow by WorkflowID",
+		Method:  "DELETE",
+		Path:    "/workflows/remove/{_id}",
+		Handler: apiModel.DeleteWorkflowByID,
+	},
+	//Will return workflows based userid paginated response
+	model.Router{
+		Name:    "Get workflow data pagination",
+		Method:  "Get",
+		Path:    "/workflows/{userid}",
+		Handler: apiModel.GetWorkflowDataPagination,
+	},
 }
