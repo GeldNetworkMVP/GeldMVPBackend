@@ -5,7 +5,7 @@ import (
 )
 
 type SaveType interface {
-	Workflows | MasterData | Stages | DataCollection
+	Workflows | MasterData | Stages | DataCollection | AppUser
 }
 
 type FindOneType interface {

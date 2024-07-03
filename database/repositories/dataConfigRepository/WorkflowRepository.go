@@ -2,6 +2,7 @@ package dataConfigRepository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/connections"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories"
@@ -61,7 +62,8 @@ func (r *WorkflowRepository) UpdateWorkflows(UpdateObject requestDtos.UpdateWork
 	return WorkflowUpdateResponse, nil
 }
 
-func (r *WorkflowRepository) DeleteWorkflow(workflowID string) error {
+func (r *WorkflowRepository) DeleteWorkflow(workflowID primitive.ObjectID) error {
+	fmt.Println("id", workflowID)
 	result, err := connections.GetSessionClient(Workflow).DeleteOne(context.TODO(), bson.M{"_id": workflowID})
 	if err != nil {
 		logs.ErrorLogger.Println("Error occured when Connecting to DB and executing DeleteOne Query in DeleteWorkflow(workflowRepository): ", err.Error())

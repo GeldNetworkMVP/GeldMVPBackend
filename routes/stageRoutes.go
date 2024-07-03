@@ -38,7 +38,7 @@ var StageRoutes = model.Routers{
 	model.Router{
 		Name:    "Get stage data  pagination",
 		Method:  "Get",
-		Path:    "/stage/{userid}",
+		Path:    "/userstage/{userid}",
 		Handler: apiModel.GetPaginatedStageData,
 	},
 }

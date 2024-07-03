@@ -7,6 +7,11 @@ var ApplicationRoutes model.Routers
 func init() {
 	routes := []model.Routers{
 		WorkflowRoutes,
+		StageRoutes,
+		HealthRoutes,
+		MDataRoutes,
+		DataTemplateRoutes,
+		AppUserRoutes,
 	}
 
 	for _, r := range routes {

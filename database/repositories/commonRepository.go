@@ -40,6 +40,30 @@ func Save[T model.SaveType](model T, collection string) (string, error) {
 	return id.Hex(), nil
 }
 
+func SaveDynamicData(model map[string]interface{}, collection string) (string, error) {
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(commons.GoDotEnvVariable("DB_URI")))
+	if err != nil {
+		logs.ErrorLogger.Println(err.Error())
+		return "", err
+	}
+	defer client.Disconnect(context.Background())
+
+	session, err := client.StartSession()
+	if err != nil {
+		logs.ErrorLogger.Println(err.Error())
+		return "", err
+	}
+	defer session.EndSession(context.Background())
+
+	rst, err := session.Client().Database(DbName).Collection(collection).InsertOne(context.TODO(), model)
+	if err != nil {
+		logs.ErrorLogger.Println(err.Error())
+		return "", err
+	}
+	id := rst.InsertedID.(primitive.ObjectID)
+	return id.Hex(), nil
+}
+
 func FindById(idName string, id string, collection string) (*mongo.Cursor, error) {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(commons.GoDotEnvVariable("DB_URI")))
 	if err != nil {
@@ -207,7 +231,7 @@ func Remove(idName string, id, collection string) (int64, error) {
 }
 
 type paginateResponseType interface {
-	[]model.Workflows | []model.MasterData | []model.Stages | []model.DataCollection
+	[]model.Workflows | []model.MasterData | []model.Stages | []model.DataCollection | []model.AppUser
 }
 
 func PaginateResponse[PaginatedData paginateResponseType](filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, object PaginatedData, sort int) (PaginatedData, model.PaginationTemplate, error) {

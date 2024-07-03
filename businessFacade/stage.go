@@ -5,6 +5,7 @@ import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateStages(stages model.Stages) (string, error) {
@@ -22,7 +23,7 @@ func UpdateStages(UpdateObject requestDtos.UpdateStages) (model.Stages, error) {
 	return stageRepository.UpdateStages(UpdateObject, update)
 }
 
-func DeleteStageByID(StageID string) error {
+func DeleteStageByID(StageID primitive.ObjectID) error {
 	return stageRepository.DeleteStage(StageID)
 }
 

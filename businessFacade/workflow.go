@@ -1,10 +1,13 @@
 package businessFacade
 
 import (
+	"fmt"
+
 	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateWorkflows(workflows model.Workflows) (string, error) {
@@ -22,7 +25,8 @@ func UpdateWorkflow(UpdateObject requestDtos.UpdateWorkflow) (model.Workflows, e
 	return workflowRepository.UpdateWorkflows(UpdateObject, update)
 }
 
-func DeleteWorkflowByID(WorkflowID string) error {
+func DeleteWorkflowByID(WorkflowID primitive.ObjectID) error {
+	fmt.Println("dleted by id", WorkflowID)
 	return workflowRepository.DeleteWorkflow(WorkflowID)
 }
 

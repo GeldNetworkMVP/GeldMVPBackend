@@ -164,7 +164,7 @@ func (r *MasterDataRepository) UpdateDataCollection(UpdateObject requestDtos.Upd
 	return mDataUpdateResponse, nil
 }
 
-func (r *MasterDataRepository) DeleteMasterData(DataID string) error {
+func (r *MasterDataRepository) DeleteMasterData(DataID primitive.ObjectID) error {
 	result, err := connections.GetSessionClient(MasterData).DeleteOne(context.TODO(), bson.M{"_id": DataID})
 	if err != nil {
 		logs.ErrorLogger.Println("Error occured when Connecting to DB and executing DeleteOne Query in DeleteMasterData(MasterDataRepository): ", err.Error())
@@ -174,7 +174,7 @@ func (r *MasterDataRepository) DeleteMasterData(DataID string) error {
 
 }
 
-func (r *MasterDataRepository) DeleteMasterDataRecords(RecordID string) error {
+func (r *MasterDataRepository) DeleteMasterDataRecords(RecordID primitive.ObjectID) error {
 	result, err := connections.GetSessionClient(DataCollection).DeleteOne(context.TODO(), bson.M{"_id": RecordID})
 	if err != nil {
 		logs.ErrorLogger.Println("Error occured when Connecting to DB and executing DeleteOne Query in DeleteDataCollection(MasterDataRepository): ", err.Error())

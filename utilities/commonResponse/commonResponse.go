@@ -10,7 +10,7 @@ import (
 )
 
 type resultType interface {
-	model.Workflows | string | model.MasterData | model.Stages | model.DataCollection | []model.DataCollection | []model.Workflows | []model.Stages | []model.MasterData | model.MDataPaginatedresponse | model.DataPaginatedresponse | model.StagePaginatedresponse | model.WorkflowPaginatedresponse
+	model.Workflows | string | model.MasterData | model.Stages | model.DataCollection | []model.DataCollection | []model.Workflows | []model.Stages | []model.MasterData | model.MDataPaginatedresponse | model.DataPaginatedresponse | model.StagePaginatedresponse | model.WorkflowPaginatedresponse | model.AppUser | model.UserPaginatedResponse
 }
 
 func SuccessStatus[T resultType](w http.ResponseWriter, result T) {

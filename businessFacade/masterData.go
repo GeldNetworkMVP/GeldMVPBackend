@@ -5,6 +5,7 @@ import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateMasterData(mdata model.MasterData) (string, error) {
@@ -100,10 +101,10 @@ func UpdateDataCollection(UpdateObject requestDtos.UpdateDataCollection) (model.
 	return masterdataRepository.UpdateDataCollection(UpdateObject, update)
 }
 
-func DeleteMasterDataByID(mDataID string) error {
+func DeleteMasterDataByID(mDataID primitive.ObjectID) error {
 	return masterdataRepository.DeleteMasterData(mDataID)
 }
 
-func DeleteMasterDataRecordByID(DataID string) error {
+func DeleteMasterDataRecordByID(DataID primitive.ObjectID) error {
 	return masterdataRepository.DeleteMasterDataRecords(DataID)
 }

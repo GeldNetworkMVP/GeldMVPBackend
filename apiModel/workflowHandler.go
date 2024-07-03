@@ -14,6 +14,7 @@ import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/validations"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 /*
@@ -78,8 +79,13 @@ func UpdateWorkflow(w http.ResponseWriter, r *http.Request) {
 func DeleteWorkflowByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
-
-	err1 := businessFacade.DeleteWorkflowByID(vars["_id"])
+	objectID, err := primitive.ObjectIDFromHex(vars["_id"])
+	if err != nil {
+		logs.WarningLogger.Println("Invalid _id: ", err.Error())
+		errors.BadRequest(w, "Invalid _id")
+		return
+	}
+	err1 := businessFacade.DeleteWorkflowByID(objectID)
 	if err1 != nil {
 		ErrorMessage := err1.Error()
 		errors.BadRequest(w, ErrorMessage)
@@ -126,7 +132,7 @@ func GetPaginatedWorkflowData(w http.ResponseWriter, r *http.Request) {
 		requestedPage = _requestedpage
 	}
 	pagination.RequestedPage = int32(requestedPage)
-	pagination.SortbyFeild = "userid"
+	pagination.SortbyField = "userid"
 	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
 	if err != nil || sort != -1 && sort != 1 {
 		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))

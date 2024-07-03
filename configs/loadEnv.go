@@ -24,7 +24,7 @@ func GetPort() string {
 	if port != "" {
 		return ":" + port
 	}
-	return ":6080"
+	return ":8000"
 }
 
 func GetNftBackendBaseUrl() string {

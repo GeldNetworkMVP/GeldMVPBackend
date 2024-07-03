@@ -20,20 +20,22 @@ import (
 /*
 	All functions here a triggered by api Calls and invokes respective BusinessFace Class Methods
 */
-//Retrevies data from the Json Body and decodes it into a model class (Stage).Then the CreateStage() method is invoked from BusinessFacade
-func CreateStage(W http.ResponseWriter, r *http.Request) {
+//Retrevies data from the Json Body and decodes it into a model class (User).Then the CreateUser() method is invoked from BusinessFacade
+func CreateUser(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	var requestCreateStage model.Stages
+	var requestCreateUser model.AppUser
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&requestCreateStage)
+	err := decoder.Decode(&requestCreateUser)
 	if err != nil {
-		logs.ErrorLogger.Println("Error occured while decoding JSON in CreateStages:stagesHandler: ", err.Error())
+		logs.ErrorLogger.Println("Error occured while decoding JSON in CreateUser:userRegistrationHandler: ", err.Error())
 	}
-	err = validations.ValidateStages(requestCreateStage)
+	err = validations.ValidateUsers(requestCreateUser)
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		result, err1 := businessFacade.CreateStages(requestCreateStage)
+		encres := commons.Encrypt(requestCreateUser.EncPW)
+		requestCreateUser.EncPW = string(encres)
+		result, err1 := businessFacade.CreateUsers(requestCreateUser)
 		if err1 != nil {
 			errors.BadRequest(W, err.Error())
 		} else {
@@ -42,23 +44,23 @@ func CreateStage(W http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Trigger the GetStageByID() method that will return The specific Stage with the ID passed via the API
-func GetStagesByID(w http.ResponseWriter, r *http.Request) {
+// Trigger the GetUserByID() method that will return The specific User with the ID passed via the API
+func GetUsersByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
-	result, err := businessFacade.GetStagesByID(vars["_id"])
+	result, err := businessFacade.GetUserByID(vars["_id"])
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[model.Stages](w, result)
+		commonResponse.SuccessStatus[model.AppUser](w, result)
 	}
 
 }
 
-// Trigger the UpdateStages() method that will return The specific updated Stage with the ID passed via the API
-func UpdateStages(w http.ResponseWriter, r *http.Request) {
+// Trigger the UpdateUser() method that will return The specific User with the ID passed via the API
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	var UpdateObject requestDtos.UpdateStages
+	var UpdateObject requestDtos.UpdateUser
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&UpdateObject)
 	if err != nil {
@@ -66,17 +68,17 @@ func UpdateStages(w http.ResponseWriter, r *http.Request) {
 		errors.BadRequest(w, err.Error())
 		return
 	} else {
-		result, err := businessFacade.UpdateStages(UpdateObject)
+		result, err := businessFacade.UpdateUsers(UpdateObject)
 		if err != nil {
-			logs.WarningLogger.Println("Failed to update stage : ", err.Error())
+			logs.WarningLogger.Println("Failed to update users : ", err.Error())
 			errors.BadRequest(w, err.Error())
 			return
 		}
-		commonResponse.SuccessStatus[model.Stages](w, result)
+		commonResponse.SuccessStatus[model.AppUser](w, result)
 	}
 }
 
-func DeleteStageByID(w http.ResponseWriter, r *http.Request) {
+func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
 	objectID, err := primitive.ObjectIDFromHex(vars["_id"])
@@ -85,14 +87,14 @@ func DeleteStageByID(w http.ResponseWriter, r *http.Request) {
 		errors.BadRequest(w, "Invalid _id")
 		return
 	}
-	err1 := businessFacade.DeleteStageByID(objectID)
+	err1 := businessFacade.DeleteUserByID(objectID)
 	if err1 != nil {
 		ErrorMessage := err1.Error()
 		errors.BadRequest(w, ErrorMessage)
 		return
 	} else {
 		w.WriteHeader(http.StatusOK)
-		message := "Stage has been deleted"
+		message := "User has been deleted"
 		err := json.NewEncoder(w).Encode(message)
 		if err != nil {
 			logs.ErrorLogger.Println(err)
@@ -102,12 +104,12 @@ func DeleteStageByID(w http.ResponseWriter, r *http.Request) {
 }
 
 /**
-**Description:Retrieves all stages for the specified user ID in a paginated format
+**Description:Retrieves all workflows for the specified user ID in a paginated format
  */
-func GetPaginatedStageData(w http.ResponseWriter, r *http.Request) {
+func GetPaginatedUserData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
 	vars := mux.Vars(r)
-	var pagination requestDtos.StagesForMatrixView
+	var pagination requestDtos.UserForMatrixView
 	pagination.UserID = vars["userid"]
 	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err1 != nil || pgsize <= 0 {
@@ -144,7 +146,7 @@ func GetPaginatedStageData(w http.ResponseWriter, r *http.Request) {
 		sort = _sort
 	}
 	pagination.SortType = sort
-	results, err := businessFacade.GetStageDataPagination(pagination)
+	results, err := businessFacade.GetUserDataPagination(pagination)
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 		return
@@ -153,6 +155,6 @@ func GetPaginatedStageData(w http.ResponseWriter, r *http.Request) {
 		commonResponse.NoContent(w, "")
 		return
 	}
-	commonResponse.SuccessStatus[model.StagePaginatedresponse](w, results)
+	commonResponse.SuccessStatus[model.UserPaginatedResponse](w, results)
 
 }

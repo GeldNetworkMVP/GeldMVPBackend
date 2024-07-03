@@ -5,7 +5,7 @@ import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 )
 
-var mDataRoutes = model.Routers{
+var MDataRoutes = model.Routers{
 	//Route will be used to add a new MasterData to DB
 	model.Router{
 		Name:    "Create MasterData",
@@ -38,21 +38,21 @@ var mDataRoutes = model.Routers{
 	model.Router{
 		Name:    "Get RecordData by mDataID",
 		Method:  "GET",
-		Path:    "/record/{dataid}",
+		Path:    "/records/{dataid}",
 		Handler: apiModel.GetRecordDataByMasterDataID,
 	},
 	//Will return user based masterdata paginated response
 	model.Router{
 		Name:    "Get Master data pagination",
 		Method:  "Get",
-		Path:    "/masterdata/{userid}",
+		Path:    "/usermasterdata/{userid}",
 		Handler: apiModel.GetPaginatedMasterData,
 	},
 	//Will return master data based record paginated response
 	model.Router{
 		Name:    "Get Master data record pagination",
 		Method:  "Get",
-		Path:    "/record/{dataid}",
+		Path:    "/masterrecord/{dataid}",
 		Handler: apiModel.GetPaginatedData,
 	},
 	//Will update MasterData based on MasterData ID provided

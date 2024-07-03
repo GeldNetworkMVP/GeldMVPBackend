@@ -14,6 +14,7 @@ import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/validations"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 /*
@@ -133,7 +134,7 @@ func GetPaginatedMasterData(w http.ResponseWriter, r *http.Request) {
 		requestedPage = _requestedpage
 	}
 	pagination.RequestedPage = int32(requestedPage)
-	pagination.SortbyFeild = "userid"
+	pagination.SortbyField = "userid"
 	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
 	if err != nil || sort != -1 && sort != 1 {
 		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
@@ -189,7 +190,7 @@ func GetPaginatedData(w http.ResponseWriter, r *http.Request) {
 		requestedPage = _requestedpage
 	}
 	pagination.RequestedPage = int32(requestedPage)
-	pagination.SortbyFeild = "dataid"
+	pagination.SortbyField = "dataid"
 	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
 	if err != nil || sort != -1 && sort != 1 {
 		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
@@ -259,8 +260,13 @@ func UpdateDataCollection(w http.ResponseWriter, r *http.Request) {
 func DeleteMasterDataByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
-
-	err1 := businessFacade.DeleteMasterDataByID(vars["_id"])
+	objectID, err := primitive.ObjectIDFromHex(vars["_id"])
+	if err != nil {
+		logs.WarningLogger.Println("Invalid _id: ", err.Error())
+		errors.BadRequest(w, "Invalid _id")
+		return
+	}
+	err1 := businessFacade.DeleteMasterDataByID(objectID)
 	if err1 != nil {
 		ErrorMessage := err1.Error()
 		errors.BadRequest(w, ErrorMessage)
@@ -279,8 +285,13 @@ func DeleteMasterDataByID(w http.ResponseWriter, r *http.Request) {
 func DeleteMasterDataRecordByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
-
-	err1 := businessFacade.DeleteMasterDataRecordByID(vars["_id"])
+	objectID, err := primitive.ObjectIDFromHex(vars["_id"])
+	if err != nil {
+		logs.WarningLogger.Println("Invalid _id: ", err.Error())
+		errors.BadRequest(w, "Invalid _id")
+		return
+	}
+	err1 := businessFacade.DeleteMasterDataRecordByID(objectID)
 	if err1 != nil {
 		ErrorMessage := err1.Error()
 		errors.BadRequest(w, ErrorMessage)

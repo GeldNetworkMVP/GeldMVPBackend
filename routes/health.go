@@ -6,7 +6,7 @@ import (
 )
 
 // This routes use to check the API status
-var testRoutes = model.Routers{
+var HealthRoutes = model.Routers{
 
 	model.Router{
 		Name:    "Connection test API",
