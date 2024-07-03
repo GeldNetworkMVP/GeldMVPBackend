@@ -1,8 +1,8 @@
-package model
+package requestDtos
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type AppUser struct {
+type UpdateUser struct {
 	AppUserID   primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
 	AdminUserID string             `json:"userid" bson:"userid"`
 	Username    string             `json:"username" bson:"username"`
@@ -13,7 +13,10 @@ type AppUser struct {
 	Status      string             `json:"status" bson:"status"`
 }
 
-type UserPaginatedResponse struct {
-	Content        []AppUser `json:"content" bson:"content" validate:"required"`
-	PaginationInfo PaginationTemplate
+type UserForMatrixView struct {
+	UserID        string `json:"userid" bson:"userid"`
+	PageSize      int32  `json:"pagesize" bson:"pagesize"`
+	RequestedPage int32  `json:"requestedPage" bson:"requestedPage" `
+	SortbyField   string `json:"sortbyfield" bson:"sortbyfield" `
+	SortType      int    `json:"sorttype" bson:"sorttype"`
 }

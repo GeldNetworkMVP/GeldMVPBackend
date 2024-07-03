@@ -61,7 +61,7 @@ func (r *StageRepository) UpdateStages(UpdateObject requestDtos.UpdateStages, up
 	return StagesUpdateResponse, nil
 }
 
-func (r *StageRepository) DeleteStage(stageID string) error {
+func (r *StageRepository) DeleteStage(stageID primitive.ObjectID) error {
 	result, err := connections.GetSessionClient(Stages).DeleteOne(context.TODO(), bson.M{"_id": stageID})
 	if err != nil {
 		logs.ErrorLogger.Println("Error occured when Connecting to DB and executing DeleteOne Query in DeleteStage(stageRepository): ", err.Error())

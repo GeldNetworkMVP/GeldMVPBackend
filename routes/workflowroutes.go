@@ -38,7 +38,7 @@ var WorkflowRoutes = model.Routers{
 	model.Router{
 		Name:    "Get workflow data pagination",
 		Method:  "Get",
-		Path:    "/workflows/{userid}",
-		Handler: apiModel.GetWorkflowDataPagination,
+		Path:    "/userworkflows/{userid}",
+		Handler: apiModel.GetPaginatedWorkflowData,
 	},
 }
