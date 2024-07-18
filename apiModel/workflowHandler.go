@@ -21,6 +21,15 @@ import (
 	All functions here a triggered by api Calls and invokes respective BusinessFace Class Methods
 */
 //Retrevies data from the Json Body and decodes it into a model class (Workflow).Then the CreateWorkflow() method is invoked from BusinessFacade
+//	@Summary		Create and Save Workflows for Plots
+//	@Description	Creates workflows to have a series of stages to map plot chain management
+//	@Tags			workflows
+//	@Accept			json
+//	@Produce		json
+//	@Param			workflowsBody	body		model.Workflows	true	"Workflow Details"
+//	@Success		200				{object}	responseDtos.ResultResponse
+//	@Failure		400				{object}	responseDtos.ErrorResponse
+//	@Router			/workflows/save [post]
 func CreateWorkflow(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var requestCreateWorkflow model.Workflows
@@ -43,6 +52,16 @@ func CreateWorkflow(W http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetWorkflowByID() method that will return The specific Workflow with the ID passed via the API
+//
+//	@Summary		Get workflow By ID
+//	@Description	Get an existing workflow By ID
+//	@Tags			workflows
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path		primitive.ObjectID	true	"WorkflowID"
+//	@Success		200	{object}	responseDtos.ResultResponse
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/workflows/{_id} [get]
 func GetWorkflowsByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
@@ -56,6 +75,16 @@ func GetWorkflowsByID(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the UpdateWorkflow() method that will return The specific Workflow with the ID passed via the API
+//
+//	@Summary		Update Workflow Details
+//	@Description	Update Workflow details
+//	@Tags			workflows
+//	@Accept			json
+//	@Produce		json
+//	@Param			workflowsBody	body		requestDtos.UpdateWorkflow	true	"Workflow Details"
+//	@Success		200				{object}	responseDtos.ResultResponse
+//	@Failure		400				{object}	responseDtos.ErrorResponse
+//	@Router			/updateworkflow [put]
 func UpdateWorkflow(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var UpdateObject requestDtos.UpdateWorkflow
@@ -76,6 +105,17 @@ func UpdateWorkflow(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteWorkflowByID deletes a workflow by ID
+//
+//	@Summary		Delete workflow By ID
+//	@Description	Delete an existing workflow By ID
+//	@Tags			workflows
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path	primitive.ObjectID	true	"WorkflowID"
+//	@Success		200
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/workflows/remove/{_id} [delete]
 func DeleteWorkflowByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
@@ -104,6 +144,20 @@ func DeleteWorkflowByID(w http.ResponseWriter, r *http.Request) {
 /**
 **Description:Retrieves all workflows for the specified user ID in a paginated format
  */
+//	@Summary		Get Paginated Workflow Data
+//	@Description	Retrieves paginated workflow data associated with a specific user
+//	@Tags			workflows
+//	@Accept			json
+//	@Produce		json
+//	@Param			userid	path		int	true	"UserID"
+//	@Param			limit	query		int	false	"Page size (default from env: PAGINATION_DEFUALT_LIMIT)"					Minimum:	1
+//	@Param			page	query		int	false	"Requested page (default from env: PAGINATION_DEFAULT_PAGE)"				Minimum:	0
+//	@Param			sort	query		int	false	"Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)"	Valid		values:	-1,	1
+//	@Success		200		{object}	responseDtos.ResultResponse
+//	@Success		204		{object}	responseDtos.ResultResponse
+//	@Failure		400		{object}	responseDtos.ErrorResponse
+//	@Failure		500		{object}	responseDtos.ErrorResponse
+//	@Router			/userworkflows/{userid} [get]
 func GetPaginatedWorkflowData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
 	vars := mux.Vars(r)

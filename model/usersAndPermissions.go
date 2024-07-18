@@ -9,7 +9,18 @@ type AppUser struct {
 	Email       string             `json:"email" bson:"email"`
 	Contact     string             `json:"contact" bson:"contact"`
 	Designation string             `json:"designation" bson:"designation"`
-	EncPW       string             `json:"encpw" bson:"encpw"`
+	EncPW       []byte             `json:"encpw" bson:"encpw"`
+	Status      string             `json:"status" bson:"status"`
+}
+
+type UserPayload struct {
+	AppUserID   primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	AdminUserID string             `json:"userid" bson:"userid"`
+	Username    string             `json:"username" bson:"username"`
+	Email       string             `json:"email" bson:"email"`
+	Contact     string             `json:"contact" bson:"contact"`
+	Designation string             `json:"designation" bson:"designation"`
+	Password    string             `json:"encpw" bson:"encpw"`
 	Status      string             `json:"status" bson:"status"`
 }
 
