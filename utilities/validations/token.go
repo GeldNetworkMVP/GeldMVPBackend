@@ -5,7 +5,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func ValidateUsers(e model.UserPayload) error {
+func ValidateToken(e model.TokenPayload) error {
 	validate = validator.New()
 	err := validate.Struct(e)
 	if err != nil {

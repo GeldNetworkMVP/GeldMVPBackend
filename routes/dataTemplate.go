@@ -13,4 +13,25 @@ var DataTemplateRoutes = model.Routers{
 		Path:    "/geldtemplate/save",
 		Handler: apiModel.HandlePostTemplateRequest,
 	},
+	//Route will be used to get data template according to PlotID
+	model.Router{
+		Name:    "Get DataTemplate By PlotID",
+		Method:  "GET",
+		Path:    "/geldtemplate/plotid/{plotid}",
+		Handler: apiModel.GetTemplateByPlotID,
+	},
+	//Route will be used to get data template according to ID
+	model.Router{
+		Name:    "Get DataTemplate By ID",
+		Method:  "GET",
+		Path:    "/geldtemplate/{_id}",
+		Handler: apiModel.GetTemplateByID,
+	},
+	//Route will be used to get HTML according to PlotID
+	model.Router{
+		Name:    "Get HTML By PlotID",
+		Method:  "GET",
+		Path:    "/geldtemplate/html/{plotid}",
+		Handler: apiModel.GetHTMLByPlotID,
+	},
 }

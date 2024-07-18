@@ -9,6 +9,13 @@ import (
 	"github.com/gorilla/context"
 )
 
+// @Summary		Test Server Health
+// @Description	Checks if the server is up and running
+// @Tags			health
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	responseDtos.HealthCheckResponse
+// @Router			/api/health [get]
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	defer context.Clear(r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

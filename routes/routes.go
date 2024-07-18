@@ -12,6 +12,7 @@ func init() {
 		MDataRoutes,
 		DataTemplateRoutes,
 		AppUserRoutes,
+		TokenRoutes,
 	}
 
 	for _, r := range routes {

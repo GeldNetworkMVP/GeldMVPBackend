@@ -231,7 +231,7 @@ func Remove(idName string, id, collection string) (int64, error) {
 }
 
 type paginateResponseType interface {
-	[]model.Workflows | []model.MasterData | []model.Stages | []model.DataCollection | []model.AppUser
+	[]model.Workflows | []model.MasterData | []model.Stages | []model.DataCollection | []model.AppUser | []model.Tokens
 }
 
 func PaginateResponse[PaginatedData paginateResponseType](filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, object PaginatedData, sort int) (PaginatedData, model.PaginationTemplate, error) {

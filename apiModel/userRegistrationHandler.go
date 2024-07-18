@@ -21,9 +21,18 @@ import (
 	All functions here a triggered by api Calls and invokes respective BusinessFace Class Methods
 */
 //Retrevies data from the Json Body and decodes it into a model class (User).Then the CreateUser() method is invoked from BusinessFacade
+//	@Summary		Create and Save Users in Project Geld
+//	@Description	Creates Users for specific designations within the pilot phase of Project Geld
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			usersBody	body		model.UserPayload	true	"User Details"
+//	@Success		200			{object}	responseDtos.ResultResponse
+//	@Failure		400			{object}	responseDtos.ErrorResponse
+//	@Router			/appuser/save [post]
 func CreateUser(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	var requestCreateUser model.AppUser
+	var requestCreateUser model.UserPayload
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&requestCreateUser)
 	if err != nil {
@@ -33,9 +42,18 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		encres := commons.Encrypt(requestCreateUser.EncPW)
-		requestCreateUser.EncPW = string(encres)
-		result, err1 := businessFacade.CreateUsers(requestCreateUser)
+		encres := commons.Encrypt(requestCreateUser.Password)
+		obj := model.AppUser{
+			AppUserID:   requestCreateUser.AppUserID,
+			AdminUserID: requestCreateUser.AdminUserID,
+			Username:    requestCreateUser.Username,
+			Email:       requestCreateUser.Email,
+			Contact:     requestCreateUser.Contact,
+			Designation: requestCreateUser.Designation,
+			EncPW:       encres,
+			Status:      requestCreateUser.Status,
+		}
+		result, err1 := businessFacade.CreateUsers(obj)
 		if err1 != nil {
 			errors.BadRequest(W, err.Error())
 		} else {
@@ -45,6 +63,16 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetUserByID() method that will return The specific User with the ID passed via the API
+//
+//	@Summary		Get user By ID
+//	@Description	Get an existing Geld user By ID
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path		primitive.ObjectID	true	"AppUserID"
+//	@Success		200	{object}	responseDtos.ResultResponse
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/appuser/{_id} [get]
 func GetUsersByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
@@ -58,6 +86,16 @@ func GetUsersByID(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the UpdateUser() method that will return The specific User with the ID passed via the API
+//
+//	@Summary		Update User Details
+//	@Description	Update geld user details
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			usersBody	body		requestDtos.UpdateUser	true	"User Details"
+//	@Success		200			{object}	responseDtos.ResultResponse
+//	@Failure		400			{object}	responseDtos.ErrorResponse
+//	@Router			/updateuser [put]
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var UpdateObject requestDtos.UpdateUser
@@ -78,6 +116,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteUserByID deletes a user by ID
+//
+//	@Summary		Delete user By ID
+//	@Description	Delete an existing Geld user By ID
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path	primitive.ObjectID	true	"AppUserID"
+//	@Success		200
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/appuser/remove/{_id} [delete]
 func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
@@ -106,6 +155,20 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 /**
 **Description:Retrieves all workflows for the specified user ID in a paginated format
  */
+//	@Summary		Get Paginated User Data
+//	@Description	Retrieves paginated user data associated with a specific admin user
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			userid	path		int	true	"UserID"
+//	@Param			limit	query		int	false	"Page size (default from env: PAGINATION_DEFUALT_LIMIT)"					Minimum:	1
+//	@Param			page	query		int	false	"Requested page (default from env: PAGINATION_DEFAULT_PAGE)"				Minimum:	0
+//	@Param			sort	query		int	false	"Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)"	Valid		values:	-1,	1
+//	@Success		200		{object}	responseDtos.ResultResponse
+//	@Success		204		{object}	responseDtos.ResultResponse
+//	@Failure		400		{object}	responseDtos.ErrorResponse
+//	@Failure		500		{object}	responseDtos.ErrorResponse
+//	@Router			/appuser/admin/{userid} [get]
 func GetPaginatedUserData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
 	vars := mux.Vars(r)
