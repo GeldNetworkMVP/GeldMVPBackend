@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 2024/06/08 19:15:33 main.go:42 [INFO]-[QA] : Gateway Started @port :8000 with qa environment 
 INFO: 2024/06/24 17:32:52 main.go:16: Tracified Backend
 INFO: 2024/06/24 17:32:52 main.go:34: Gateway Started @port :6080 with  environment
@@ -62,3 +63,99 @@ INFO: 2024/06/27 15:12:51 main.go:34: Gateway Started @port :8000 with  environm
 INFO: 2024/06/27 15:13:08 WorkflowRepository.go:71: workflow deleted : 1
 INFO: 2024/06/27 15:20:13 StageRepository.go:69: stage deleted : 0
 INFO: 2024/06/27 15:25:36 StageRepository.go:69: stage deleted : 0
+=======
+INFO: 2024/07/10 12:28:12 main.go:16: Tracified Backend
+INFO: 2024/07/10 12:28:12 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/11 11:54:49 main.go:16: Tracified Backend
+INFO: 2024/07/11 11:54:49 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/11 12:53:05 main.go:16: Tracified Backend
+INFO: 2024/07/11 12:53:05 main.go:34: Gateway Started @port :8000 with  environment
+ERROR: 2024/07/11 12:58:43 userRegistrationHandler.go:76: invalid character '{' looking for beginning of object key string
+INFO: 2024/07/11 13:00:00 userRepository.go:71: user deleted : 1
+ERROR: 2024/07/11 16:59:32 createFolder.go:48: Error when creating folder :  AccessDenied: Access Denied
+	status code: 403, request id: a7405075f0a625085d96f63d53125a27, host id: ZmlsZWJhc2UtNTU1NTZmNGM5LW1tNWR0
+INFO: 2024/07/17 17:10:05 main.go:16: Tracified Backend
+INFO: 2024/07/17 17:10:05 main.go:34: Gateway Started @port :8000 with  environment
+ERROR: 2024/07/17 17:10:36 createFolder.go:48: Error when creating folder :  AccessDenied: Access Denied
+	status code: 403, request id: 16584acf91f22e9aafc98a140913cb08, host id: ZmlsZWJhc2UtYmRkNWI5Njc3LXdkczhr
+INFO: 2024/07/17 17:25:34 main.go:16: Tracified Backend
+INFO: 2024/07/17 17:25:34 main.go:34: Gateway Started @port :8000 with  environment
+ERROR: 2024/07/17 17:29:52 createFolder.go:48: Error when creating folder :  AccessDenied: Access Denied
+	status code: 403, request id: 7abfbd8e16bdc6d52e6a2914977043f6, host id: ZmlsZWJhc2UtYmRkNWI5Njc3LXpyeHo1
+INFO: 2024/07/17 17:45:32 main.go:16: Tracified Backend
+INFO: 2024/07/17 17:45:32 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/17 17:47:06 main.go:16: Tracified Backend
+INFO: 2024/07/17 17:47:06 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/17 17:50:30 createFolder.go:52: Folder created under bucket geld-token-view
+ERROR: 2024/07/17 17:50:30 uploadFile.go:71: Error when uploading the file to the  geld-token-view  bucket in filebase :  AccountProblem: Free accounts do not allow HTML file uploads.
+	status code: 403, request id: 5d399f5c14f210f77f7d8fb40d661ea0, host id: ZmlsZWJhc2UtYmRkNWI5Njc3LWp6dGJw
+ERROR: 2024/07/17 17:50:30 ipfs.go:75: Error when uploading to IPFS :  AccountProblem: Free accounts do not allow HTML file uploads.
+	status code: 403, request id: 5d399f5c14f210f77f7d8fb40d661ea0, host id: ZmlsZWJhc2UtYmRkNWI5Njc3LWp6dGJw
+ERROR: 2024/07/17 17:50:30 ipfs.go:78: Error when removing the file :  remove C:\Users\Admin\Desktop\Geld\GeldMVPBackend\demo1.html: The process cannot access the file because it is being used by another process.
+INFO: 2024/07/17 17:52:05 main.go:16: Tracified Backend
+INFO: 2024/07/17 17:52:05 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/17 17:54:53 createFolder.go:52: Folder created under bucket geld-token-view
+ERROR: 2024/07/17 17:54:53 uploadFile.go:71: Error when uploading the file to the  geld-token-view  bucket in filebase :  AccountProblem: Free accounts do not allow HTML file uploads.
+	status code: 403, request id: a257768a5ca7983a88d48b64cbd14555, host id: ZmlsZWJhc2UtYmRkNWI5Njc3LXpyeHo1
+ERROR: 2024/07/17 17:54:53 ipfs.go:75: Error when uploading to IPFS :  AccountProblem: Free accounts do not allow HTML file uploads.
+	status code: 403, request id: a257768a5ca7983a88d48b64cbd14555, host id: ZmlsZWJhc2UtYmRkNWI5Njc3LXpyeHo1
+ERROR: 2024/07/17 17:54:53 ipfs.go:78: Error when removing the file :  remove C:\Users\Admin\Desktop\Geld\GeldMVPBackend\demo1.html: The process cannot access the file because it is being used by another process.
+INFO: 2024/07/17 17:59:41 main.go:16: Tracified Backend
+INFO: 2024/07/17 17:59:41 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/17 18:01:31 createFolder.go:52: Folder created under bucket geld-token-view
+INFO: 2024/07/17 18:01:31 uploadFile.go:112: Content uploaded to IPFS at : https://api.filebase.io/v1/ipfsQmUnYUSH6FDugqKcDSYvoUD8YyyzGpSJgBJj8Vz5Tr2AdX
+INFO: 2024/07/17 18:01:31 ipfs.go:33: CID Hash : QmUnYUSH6FDugqKcDSYvoUD8YyyzGpSJgBJj8Vz5Tr2AdX
+INFO: 2024/07/17 18:09:18 tokenHandler.go:114: val returned from env:  2
+ERROR: 2024/07/17 18:09:19 commonResponse.go:37: http: request method or response status code does not allow body
+INFO: 2024/07/17 18:14:30 main.go:16: Tracified Backend
+INFO: 2024/07/17 18:14:30 main.go:34: Gateway Started @port :8000 with  environment
+ERROR: 2024/07/17 18:15:50 commonResponse.go:37: http: request method or response status code does not allow body
+INFO: 2024/07/18 10:54:01 main.go:16: Tracified Backend
+INFO: 2024/07/18 10:54:01 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 10:57:04 main.go:16: Tracified Backend
+INFO: 2024/07/18 10:57:04 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 11:06:14 main.go:16: Tracified Backend
+INFO: 2024/07/18 11:06:14 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 11:09:12 main.go:16: Tracified Backend
+INFO: 2024/07/18 11:09:12 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 11:32:06 main.go:16: Tracified Backend
+INFO: 2024/07/18 11:32:06 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 12:14:49 main.go:16: Tracified Backend
+INFO: 2024/07/18 12:14:49 main.go:34: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 12:26:19 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:32:05 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:36:53 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:38:24 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:39:46 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:39:46 main.go:42: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 12:44:22 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:44:22 main.go:42: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 12:50:06 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:50:06 main.go:42: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 12:53:21 main.go:24: Tracified Backend
+INFO: 2024/07/18 12:53:21 main.go:42: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 12:57:26 main.go:21: Tracified Backend
+INFO: 2024/07/18 12:57:26 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 13:03:26 main.go:21: Tracified Backend
+INFO: 2024/07/18 13:03:26 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 13:24:08 main.go:21: Tracified Backend
+INFO: 2024/07/18 13:24:08 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 13:37:36 main.go:21: Tracified Backend
+INFO: 2024/07/18 13:37:36 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 13:39:38 main.go:21: Tracified Backend
+INFO: 2024/07/18 13:39:38 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 13:43:57 main.go:21: Tracified Backend
+INFO: 2024/07/18 13:43:57 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 13:46:20 main.go:21: Tracified Backend
+INFO: 2024/07/18 13:46:20 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 14:37:58 main.go:21: Tracified Backend
+INFO: 2024/07/18 14:37:58 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 15:24:53 main.go:21: Tracified Backend
+INFO: 2024/07/18 15:24:53 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 19:43:12 main.go:21: Tracified Backend
+INFO: 2024/07/18 19:43:12 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/20 21:15:44 main.go:21: Tracified Backend
+INFO: 2024/07/20 21:15:44 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/20 21:35:03 main.go:21: Tracified Backend
+INFO: 2024/07/20 21:35:03 main.go:39: Gateway Started @port :8000 with qa environment
+>>>>>>> Stashed changes
