@@ -86,3 +86,7 @@ INFO: 2024/07/18 14:37:58 main.go:21: Tracified Backend
 INFO: 2024/07/18 14:37:58 main.go:39: Gateway Started @port :8000 with  environment
 INFO: 2024/07/18 15:24:53 main.go:21: Tracified Backend
 INFO: 2024/07/18 15:24:53 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/18 19:43:12 main.go:21: Tracified Backend
+INFO: 2024/07/18 19:43:12 main.go:39: Gateway Started @port :8000 with  environment
+INFO: 2024/07/20 21:15:44 main.go:21: Tracified Backend
+INFO: 2024/07/20 21:15:44 main.go:39: Gateway Started @port :8000 with  environment

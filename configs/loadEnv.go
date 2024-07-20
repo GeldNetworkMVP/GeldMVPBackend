@@ -7,16 +7,14 @@ import (
 )
 
 var (
-	port          = ""
-	EnvName       = ""
-	nftBackendUrl = ""
+	port    = ""
+	EnvName = ""
 )
 
 func LoadEnv() {
 	godotenv.Load(".env")
 	EnvName = os.Getenv("BRANCH_NAME")
 	port = os.Getenv("BE_PORT")
-	nftBackendUrl = os.Getenv("NFT_BACKEND_BASEURL")
 }
 
 func GetPort() string {
@@ -25,9 +23,4 @@ func GetPort() string {
 		return ":" + port
 	}
 	return ":8000"
-}
-
-func GetNftBackendBaseUrl() string {
-	LoadEnv()
-	return nftBackendUrl
 }
