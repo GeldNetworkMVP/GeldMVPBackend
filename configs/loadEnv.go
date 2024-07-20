@@ -2,8 +2,7 @@ package configs
 
 import (
 	"os"
-
-	"github.com/joho/godotenv"
+	//"github.com/joho/godotenv"
 )
 
 var (
@@ -12,7 +11,7 @@ var (
 )
 
 func LoadEnv() {
-	godotenv.Load(".env")
+	//godotenv.Load(".env")
 	EnvName = os.Getenv("BRANCH_NAME")
 	port = os.Getenv("BE_PORT")
 }

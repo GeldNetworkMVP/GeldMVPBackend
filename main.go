@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/handlers"
-	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
+	//"github.com/joho/godotenv"
+	//"github.com/sirupsen/logrus"
 )
 
 // @title			Geld.Network API
@@ -19,11 +19,11 @@ import (
 // @termsOfService	http://swagger.io/terms/
 func main() {
 	logs.InfoLogger.Println("Tracified Backend")
-	err := godotenv.Load()
-	if err != nil {
-		logrus.Println("Info Issue with loading .env file")
-		logs.InfoLogger.Println("Info Issue with loading .env1 file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	logrus.Println("Info Issue with loading .env file")
+	// 	logs.InfoLogger.Println("Info Issue with loading .env1 file")
+	// }
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Token"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
