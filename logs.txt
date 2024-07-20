@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 2024/06/08 19:15:33 main.go:42 [INFO]-[QA] : Gateway Started @port :8000 with qa environment 
 INFO: 2024/06/24 17:32:52 main.go:16: Tracified Backend
@@ -64,6 +65,8 @@ INFO: 2024/06/27 15:13:08 WorkflowRepository.go:71: workflow deleted : 1
 INFO: 2024/06/27 15:20:13 StageRepository.go:69: stage deleted : 0
 INFO: 2024/06/27 15:25:36 StageRepository.go:69: stage deleted : 0
 =======
+=======
+>>>>>>> 866839148cca2ba6fae38d032063c177a402d3db
 INFO: 2024/07/10 12:28:12 main.go:16: Tracified Backend
 INFO: 2024/07/10 12:28:12 main.go:34: Gateway Started @port :8000 with  environment
 INFO: 2024/07/11 11:54:49 main.go:16: Tracified Backend
@@ -156,6 +159,9 @@ INFO: 2024/07/18 19:43:12 main.go:21: Tracified Backend
 INFO: 2024/07/18 19:43:12 main.go:39: Gateway Started @port :8000 with  environment
 INFO: 2024/07/20 21:15:44 main.go:21: Tracified Backend
 INFO: 2024/07/20 21:15:44 main.go:39: Gateway Started @port :8000 with  environment
+<<<<<<< HEAD
 INFO: 2024/07/20 21:35:03 main.go:21: Tracified Backend
 INFO: 2024/07/20 21:35:03 main.go:39: Gateway Started @port :8000 with qa environment
 >>>>>>> Stashed changes
+=======
+>>>>>>> 866839148cca2ba6fae38d032063c177a402d3db

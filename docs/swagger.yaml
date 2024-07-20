@@ -1,0 +1,1156 @@
+definitions:
+  model.DataCollection:
+    properties:
+      _id:
+        type: string
+      collectionname:
+        type: string
+      contact:
+        type: string
+      dataid:
+        type: string
+      description:
+        type: string
+      location:
+        type: string
+      purpose:
+        items:
+          type: string
+        type: array
+      type:
+        type: string
+      userid:
+        type: string
+    type: object
+  model.MasterData:
+    properties:
+      _id:
+        type: string
+      dataname:
+        type: string
+      description:
+        type: string
+      userid:
+        type: string
+    type: object
+  model.Stages:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      fields:
+        items:
+          type: string
+        type: array
+      stagename:
+        type: string
+      userid:
+        type: string
+    type: object
+  model.TokenPayload:
+    properties:
+      _id:
+        type: string
+      bchash:
+        type: string
+      bcstatus:
+        type: string
+      description:
+        type: string
+      filetype:
+        type: string
+      plotid:
+        type: string
+      price:
+        type: string
+      tokenhash:
+        type: string
+      tokenname:
+        type: string
+      tokenpayload:
+        type: string
+    type: object
+  model.UserPayload:
+    properties:
+      _id:
+        type: string
+      contact:
+        type: string
+      designation:
+        type: string
+      email:
+        type: string
+      encpw:
+        type: string
+      status:
+        type: string
+      userid:
+        type: string
+      username:
+        type: string
+    type: object
+  model.Workflows:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      stages:
+        items:
+          type: string
+        type: array
+      userid:
+        type: string
+      workflowname:
+        type: string
+    type: object
+  requestDtos.UpdateDataCollection:
+    properties:
+      _id:
+        type: string
+      collectionname:
+        type: string
+      contact:
+        type: string
+      dataid:
+        type: string
+      description:
+        type: string
+      location:
+        type: string
+      purpose:
+        items:
+          type: string
+        type: array
+      type:
+        type: string
+      userid:
+        type: string
+    type: object
+  requestDtos.UpdateMasterData:
+    properties:
+      _id:
+        type: string
+      dataname:
+        type: string
+      description:
+        type: string
+      userid:
+        type: string
+    type: object
+  requestDtos.UpdateStages:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      fields:
+        items:
+          type: string
+        type: array
+      stagename:
+        type: string
+      userid:
+        type: string
+    type: object
+  requestDtos.UpdateToken:
+    properties:
+      _id:
+        type: string
+      status:
+        type: string
+    type: object
+  requestDtos.UpdateUser:
+    properties:
+      _id:
+        type: string
+      contact:
+        type: string
+      designation:
+        type: string
+      email:
+        type: string
+      encpw:
+        type: string
+      status:
+        type: string
+      userid:
+        type: string
+      username:
+        type: string
+    type: object
+  requestDtos.UpdateWorkflow:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      stages:
+        items:
+          type: string
+        type: array
+      userid:
+        type: string
+      workflowname:
+        type: string
+    type: object
+  responseDtos.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+  responseDtos.HealthCheckResponse:
+    properties:
+      note:
+        type: string
+      time:
+        type: string
+      version:
+        type: string
+    type: object
+  responseDtos.ResultResponse:
+    properties:
+      Response: {}
+      Status:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: This is the Geld.Network Server.
+  termsOfService: http://swagger.io/terms/
+  title: Geld.Network API
+  version: "1.0"
+paths:
+  /api/health:
+    get:
+      consumes:
+      - application/json
+      description: Checks if the server is up and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.HealthCheckResponse'
+      summary: Test Server Health
+      tags:
+      - health
+  /appuser/{_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing Geld user By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get user By ID
+      tags:
+      - users
+  /appuser/admin/{userid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated user data associated with a specific admin
+        user
+      parameters:
+      - description: UserID
+        in: path
+        name: userid
+        required: true
+        type: integer
+      - description: 'Page size (default from env: PAGINATION_DEFUALT_LIMIT)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Requested page (default from env: PAGINATION_DEFAULT_PAGE)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)'
+        in: query
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Paginated User Data
+      tags:
+      - users
+  /appuser/remove/{_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing Geld user By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Delete user By ID
+      tags:
+      - users
+  /appuser/save:
+    post:
+      consumes:
+      - application/json
+      description: Creates Users for specific designations within the pilot phase
+        of Project Geld
+      parameters:
+      - description: User Details
+        in: body
+        name: usersBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Create and Save Users in Project Geld
+      tags:
+      - users
+  /geldtemplate/{_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing Data Template By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Data Template By ID
+      tags:
+      - data template
+  /geldtemplate/html/{plotid}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing HTML for token generation By Plot ID
+      parameters:
+      - description: PlotID
+        in: path
+        name: plotid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get HTML By Plot ID
+      tags:
+      - data template
+  /geldtemplate/plotid/{plotid}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing Data Template By Plot ID
+      parameters:
+      - description: PlotID
+        in: path
+        name: plotid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Data Template By Plot ID
+      tags:
+      - data template
+  /geldtemplate/save:
+    post:
+      consumes:
+      - application/json
+      description: The Data Templates aacount for 1 stage which consists of master
+        data and real time data
+      parameters:
+      - description: Data Template Details
+        in: body
+        name: dataTemplateBody
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Save Data Templates submitted by the Geld App
+      tags:
+      - data template
+  /masterdata/{_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing Master Data Container ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Master Data by ID
+      tags:
+      - master data container
+  /masterdata/remove/{_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing Master Data Container By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Delete Master Data Container By ID
+      tags:
+      - master data container
+  /masterdata/save:
+    post:
+      consumes:
+      - application/json
+      description: This creates a container to whole master data records per type
+      parameters:
+      - description: Master Data Container Details
+        in: body
+        name: masterDataContainerBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.MasterData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Save Master Data Container submitted by Geld Configurations
+      tags:
+      - master data container
+  /masterrecord/{dataid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated data collection associated with a specific
+        dataID
+      parameters:
+      - description: DataID
+        in: path
+        name: dataid
+        required: true
+        type: integer
+      - description: 'Page size (default from env: PAGINATION_DEFUALT_LIMIT)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Requested page (default from env: PAGINATION_DEFAULT_PAGE)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)'
+        in: query
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Paginated data collection
+      tags:
+      - data collection
+  /record/{_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing Record Data By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Record Data By ID
+      tags:
+      - data collection
+  /record/remove/{_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing Master Data Record By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Delete Master Data Records By ID
+      tags:
+      - data collection
+  /record/save:
+    post:
+      consumes:
+      - application/json
+      description: This creates a collections for Master Data Containers based on
+        container type
+      parameters:
+      - description: Data Collection Details
+        in: body
+        name: dataCollectionBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.DataCollection'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Save Data Collection for Master Data Container
+      tags:
+      - data collection
+  /records/{dataid}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing Record Data By Master Data ID
+      parameters:
+      - description: DataID
+        in: path
+        name: dataid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Record Data By Master Data ID
+      tags:
+      - data collection
+  /stage/{_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get existing Stage By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Stage By ID
+      tags:
+      - stages
+  /stage/remove/{_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing Stage By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Delete Stage By ID
+      tags:
+      - stages
+  /stage/save:
+    post:
+      consumes:
+      - application/json
+      description: Creates Stages with Fields unique to it for data input labels by
+        Geld App
+      parameters:
+      - description: Stage Details
+        in: body
+        name: stagesBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.Stages'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Create and Save Stages for Workflows
+      tags:
+      - stages
+  /token/{_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get Existing Token By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responseDtos.ResultResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/responseDtos.ErrorResponse'
+            type: array
+      summary: Get Token By ID
+      tags:
+      - tokens
+  /token/save:
+    post:
+      consumes:
+      - application/json
+      description: Gets a timeline of data templates and creates a token per plot
+      parameters:
+      - description: Token Details
+        in: body
+        name: tokensBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.TokenPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Create and Save Tokens per Plot
+      tags:
+      - tokens
+  /tokens/{status}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated token data associated with a specific status
+      parameters:
+      - description: Status
+        in: path
+        name: status
+        required: true
+        type: integer
+      - description: 'Page size (default from env: PAGINATION_DEFUALT_LIMIT)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Requested page (default from env: PAGINATION_DEFAULT_PAGE)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)'
+        in: query
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Paginated Token Data
+      tags:
+      - tokens
+  /tokens/updatestatus:
+    put:
+      consumes:
+      - application/json
+      description: Update Token Status based on if it has been minted or sold and
+        bought
+      parameters:
+      - description: Token Details
+        in: body
+        name: tokensBody
+        required: true
+        schema:
+          $ref: '#/definitions/requestDtos.UpdateToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Update Token Status
+      tags:
+      - tokens
+  /updatemasterdata:
+    put:
+      consumes:
+      - application/json
+      description: Update an exisiting Master Data Container
+      parameters:
+      - description: Master Data Container Details
+        in: body
+        name: masterDataContainerBody
+        required: true
+        schema:
+          $ref: '#/definitions/requestDtos.UpdateMasterData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Update Master Data Container
+      tags:
+      - master data container
+  /updaterecords:
+    put:
+      consumes:
+      - application/json
+      description: Update an exisiting Master Data Container
+      parameters:
+      - description: Data Collection Details
+        in: body
+        name: dataCollectionBody
+        required: true
+        schema:
+          $ref: '#/definitions/requestDtos.UpdateDataCollection'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Update Master Data Container
+      tags:
+      - data collection
+  /updatestage:
+    put:
+      consumes:
+      - application/json
+      description: Update an exisiting Stages
+      parameters:
+      - description: Stage Details
+        in: body
+        name: stagesBody
+        required: true
+        schema:
+          $ref: '#/definitions/requestDtos.UpdateStages'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Update Stage Data
+      tags:
+      - stages
+  /updateuser:
+    put:
+      consumes:
+      - application/json
+      description: Update geld user details
+      parameters:
+      - description: User Details
+        in: body
+        name: usersBody
+        required: true
+        schema:
+          $ref: '#/definitions/requestDtos.UpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Update User Details
+      tags:
+      - users
+  /updateworkflow:
+    put:
+      consumes:
+      - application/json
+      description: Update Workflow details
+      parameters:
+      - description: Workflow Details
+        in: body
+        name: workflowsBody
+        required: true
+        schema:
+          $ref: '#/definitions/requestDtos.UpdateWorkflow'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Update Workflow Details
+      tags:
+      - workflows
+  /usermasterdata/{userid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated master data associated with a specific user
+      parameters:
+      - description: UserID
+        in: path
+        name: userid
+        required: true
+        type: integer
+      - description: 'Page size (default from env: PAGINATION_DEFUALT_LIMIT)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Requested page (default from env: PAGINATION_DEFAULT_PAGE)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)'
+        in: query
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Paginated master data
+      tags:
+      - master data container
+  /userstage/{userid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated Stage data associated with a specific user
+      parameters:
+      - description: UserID
+        in: path
+        name: userid
+        required: true
+        type: integer
+      - description: 'Page size (default from env: PAGINATION_DEFUALT_LIMIT)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Requested page (default from env: PAGINATION_DEFAULT_PAGE)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)'
+        in: query
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Paginated Stage Data
+      tags:
+      - stages
+  /userworkflows/{userid}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves paginated workflow data associated with a specific user
+      parameters:
+      - description: UserID
+        in: path
+        name: userid
+        required: true
+        type: integer
+      - description: 'Page size (default from env: PAGINATION_DEFUALT_LIMIT)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Requested page (default from env: PAGINATION_DEFAULT_PAGE)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)'
+        in: query
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get Paginated Workflow Data
+      tags:
+      - workflows
+  /workflows/{_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an existing workflow By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Get workflow By ID
+      tags:
+      - workflows
+  /workflows/remove/{_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing workflow By ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Delete workflow By ID
+      tags:
+      - workflows
+  /workflows/save:
+    post:
+      consumes:
+      - application/json
+      description: Creates workflows to have a series of stages to map plot chain
+        management
+      parameters:
+      - description: Workflow Details
+        in: body
+        name: workflowsBody
+        required: true
+        schema:
+          $ref: '#/definitions/model.Workflows'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDtos.ResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responseDtos.ErrorResponse'
+      summary: Create and Save Workflows for Plots
+      tags:
+      - workflows
+swagger: "2.0"

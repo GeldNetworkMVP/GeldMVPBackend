@@ -21,6 +21,15 @@ import (
 	All functions here a triggered by api Calls and invokes respective BusinessFace Class Methods
 */
 //Retrevies data from the Json Body and decodes it into a model class (Stage).Then the CreateStage() method is invoked from BusinessFacade
+//	@Summary		Create and Save Stages for Workflows
+//	@Description	Creates Stages with Fields unique to it for data input labels by Geld App
+//	@Tags			stages
+//	@Accept			json
+//	@Produce		json
+//	@Param			stagesBody	body		model.Stages	true	"Stage Details"
+//	@Success		200			{object}	responseDtos.ResultResponse
+//	@Failure		400			{object}	responseDtos.ErrorResponse
+//	@Router			/stage/save [post]
 func CreateStage(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var requestCreateStage model.Stages
@@ -43,6 +52,16 @@ func CreateStage(W http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetStageByID() method that will return The specific Stage with the ID passed via the API
+//
+//	@Summary		Get Stage By ID
+//	@Description	Get existing Stage By ID
+//	@Tags			stages
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path		primitive.ObjectID	true	"StageID"
+//	@Success		200	{object}	responseDtos.ResultResponse
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/stage/{_id} [get]
 func GetStagesByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
@@ -56,6 +75,17 @@ func GetStagesByID(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the UpdateStages() method that will return The specific updated Stage with the ID passed via the API
+// Trigger the UpdateMasterData() method that will return The specific updated MasterData with the ID passed via the API
+//
+//	@Summary		Update Stage Data
+//	@Description	Update an exisiting Stages
+//	@Tags			stages
+//	@Accept			json
+//	@Produce		json
+//	@Param			stagesBody	body		requestDtos.UpdateStages	true	"Stage Details"
+//	@Success		200			{object}	responseDtos.ResultResponse
+//	@Failure		400			{object}	responseDtos.ErrorResponse
+//	@Router			/updatestage [put]
 func UpdateStages(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var UpdateObject requestDtos.UpdateStages
@@ -76,6 +106,17 @@ func UpdateStages(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteStageByID deletes a stage by ID
+//
+//	@Summary		Delete Stage By ID
+//	@Description	Delete an existing Stage By ID
+//	@Tags			stages
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path	primitive.ObjectID	true	"StageID"
+//	@Success		200
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/stage/remove/{_id} [delete]
 func DeleteStageByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
@@ -104,6 +145,20 @@ func DeleteStageByID(w http.ResponseWriter, r *http.Request) {
 /**
 **Description:Retrieves all stages for the specified user ID in a paginated format
  */
+//	@Summary		Get Paginated Stage Data
+//	@Description	Retrieves paginated Stage data associated with a specific user
+//	@Tags			stages
+//	@Accept			json
+//	@Produce		json
+//	@Param			userid	path		int	true	"UserID"
+//	@Param			limit	query		int	false	"Page size (default from env: PAGINATION_DEFUALT_LIMIT)"					Minimum:	1
+//	@Param			page	query		int	false	"Requested page (default from env: PAGINATION_DEFAULT_PAGE)"				Minimum:	0
+//	@Param			sort	query		int	false	"Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)"	Valid		values:	-1,	1
+//	@Success		200		{object}	responseDtos.ResultResponse
+//	@Success		204		{object}	responseDtos.ResultResponse
+//	@Failure		400		{object}	responseDtos.ErrorResponse
+//	@Failure		500		{object}	responseDtos.ErrorResponse
+//	@Router			/userstage/{userid} [get]
 func GetPaginatedStageData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
 	vars := mux.Vars(r)

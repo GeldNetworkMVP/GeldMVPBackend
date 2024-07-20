@@ -6,6 +6,7 @@ import (
 )
 
 // This routes use to check the API status
+
 var HealthRoutes = model.Routers{
 
 	model.Router{

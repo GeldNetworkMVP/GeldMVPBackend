@@ -6,12 +6,17 @@ import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/configs"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/routes"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
+// @title			Geld.Network API
+// @version		1.0
+// @description	This is the Geld.Network Server.
+// @termsOfService	http://swagger.io/terms/
 func main() {
 	logs.InfoLogger.Println("Tracified Backend")
 	err := godotenv.Load()
@@ -25,8 +30,8 @@ func main() {
 	// Start API
 	router := routes.NewRouter()
 
-	router.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml", Path: "api-docs"}
+	router.Handle("/docs/swagger.yaml", http.FileServer(http.Dir("./")))
+	opts := middleware.SwaggerUIOpts{SpecURL: "/docs/swagger.yaml", Path: "api-docs"}
 	sh := middleware.SwaggerUI(opts, nil)
 	router.Handle("/api-docs", sh)
 

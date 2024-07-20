@@ -21,6 +21,16 @@ import (
 	All functions here a triggered by api Calls and invokes respective BusinessFace Class Methods
 */
 //Retrevies data from the Json Body and decodes it into a model class (Master Data).Then the CreateMasterData() method is invoked from BusinessFacade
+
+//	@Summary		Save Master Data Container submitted by Geld Configurations
+//	@Description	This creates a container to whole master data records per type
+//	@Tags			master data container
+//	@Accept			json
+//	@Produce		json
+//	@Param			masterDataContainerBody	body		model.MasterData	true	"Master Data Container Details"
+//	@Success		200						{object}	responseDtos.ResultResponse
+//	@Failure		400						{object}	responseDtos.ErrorResponse
+//	@Router			/masterdata/save [post]
 func CreateMasterData(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var requestCreateMdata model.MasterData
@@ -43,6 +53,16 @@ func CreateMasterData(W http.ResponseWriter, r *http.Request) {
 }
 
 // Retrevies data from the Json Body and decodes it into a model class (Data Collection).Then the CreateDataCollection() method is invoked from BusinessFacade
+
+//	@Summary		Save Data Collection for Master Data Container
+//	@Description	This creates a collections for Master Data Containers based on container type
+//	@Tags			data collection
+//	@Accept			json
+//	@Produce		json
+//	@Param			dataCollectionBody	body		model.DataCollection	true	"Data Collection Details"
+//	@Success		200					{object}	responseDtos.ResultResponse
+//	@Failure		400					{object}	responseDtos.ErrorResponse
+//	@Router			/record/save [post]
 func CreateDataCollection(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var requestCreateMdataCollection model.DataCollection
@@ -65,6 +85,15 @@ func CreateDataCollection(W http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetMasterDataByID() method that will return The specific MasterData with the ID passed via the API
+//	@Summary		Get Master Data by ID
+//	@Description	Get an existing Master Data Container ID
+//	@Tags			master data container
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path		primitive.ObjectID	true	"DataID"
+//	@Success		200	{object}	responseDtos.ResultResponse
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/masterdata/{_id} [get]
 func GetMasterDataByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
@@ -78,6 +107,15 @@ func GetMasterDataByID(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetRecordDataByID() method that will return The specific RecordData with the ID passed via the API
+//	@Summary		Get Record Data By ID
+//	@Description	Get an existing Record Data By ID
+//	@Tags			data collection
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path		primitive.ObjectID	true	"CollectionID"
+//	@Success		200	{object}	responseDtos.ResultResponse
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/record/{_id} [get]
 func GetRecordDataByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
@@ -91,6 +129,15 @@ func GetRecordDataByID(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetRecordDataByMasterDataID() method that will return The specific RecordData with the MasterDataID passed via the API
+//	@Summary		Get Record Data By Master Data ID
+//	@Description	Get an existing Record Data By Master Data ID
+//	@Tags			data collection
+//	@Accept			json
+//	@Produce		json
+//	@Param			dataid	path		string	true	"DataID"
+//	@Success		200		{object}	responseDtos.ResultResponse
+//	@Failure		400		{object}	responseDtos.ErrorResponse
+//	@Router			/records/{dataid} [get]
 func GetRecordDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
@@ -106,6 +153,20 @@ func GetRecordDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 /**
 **Description:Retrieves all masterdata for the specified user in a paginated format
  */
+//	@Summary		Get Paginated master data
+//	@Description	Retrieves paginated master data associated with a specific user
+//	@Tags			master data container
+//	@Accept			json
+//	@Produce		json
+//	@Param			userid	path		int	true	"UserID"
+//	@Param			limit	query		int	false	"Page size (default from env: PAGINATION_DEFUALT_LIMIT)"					Minimum:	1
+//	@Param			page	query		int	false	"Requested page (default from env: PAGINATION_DEFAULT_PAGE)"				Minimum:	0
+//	@Param			sort	query		int	false	"Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)"	Valid		values:	-1,	1
+//	@Success		200		{object}	responseDtos.ResultResponse
+//	@Success		204		{object}	responseDtos.ResultResponse
+//	@Failure		400		{object}	responseDtos.ErrorResponse
+//	@Failure		500		{object}	responseDtos.ErrorResponse
+//	@Router			/usermasterdata/{userid} [get]
 func GetPaginatedMasterData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
 	vars := mux.Vars(r)
@@ -162,6 +223,20 @@ func GetPaginatedMasterData(w http.ResponseWriter, r *http.Request) {
 /**
 **Description:Retrieves all data collections for the specified master data ID in a paginated format
  */
+//	@Summary		Get Paginated data collection
+//	@Description	Retrieves paginated data collection associated with a specific dataID
+//	@Tags			data collection
+//	@Accept			json
+//	@Produce		json
+//	@Param			dataid	path		int	true	"DataID"
+//	@Param			limit	query		int	false	"Page size (default from env: PAGINATION_DEFUALT_LIMIT)"					Minimum:	1
+//	@Param			page	query		int	false	"Requested page (default from env: PAGINATION_DEFAULT_PAGE)"				Minimum:	0
+//	@Param			sort	query		int	false	"Sort order (-1: Desc, 1: Asc, default from env: PAGINATION_DEFAULT_SORT)"	Valid		values:	-1,	1
+//	@Success		200		{object}	responseDtos.ResultResponse
+//	@Success		204		{object}	responseDtos.ResultResponse
+//	@Failure		400		{object}	responseDtos.ErrorResponse
+//	@Failure		500		{object}	responseDtos.ErrorResponse
+//	@Router			/masterrecord/{dataid} [get]
 func GetPaginatedData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
 	vars := mux.Vars(r)
@@ -216,6 +291,16 @@ func GetPaginatedData(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the UpdateMasterData() method that will return The specific updated MasterData with the ID passed via the API
+//
+//	@Summary		Update Master Data Container
+//	@Description	Update an exisiting Master Data Container
+//	@Tags			master data container
+//	@Accept			json
+//	@Produce		json
+//	@Param			masterDataContainerBody	body		requestDtos.UpdateMasterData	true	"Master Data Container Details"
+//	@Success		200						{object}	responseDtos.ResultResponse
+//	@Failure		400						{object}	responseDtos.ErrorResponse
+//	@Router			/updatemasterdata [put]
 func UpdateMasterData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var UpdateObject requestDtos.UpdateMasterData
@@ -237,6 +322,16 @@ func UpdateMasterData(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the UpdateDataCollection() method that will return The specific updated MasterDataollection with the ID passed via the API
+//
+//	@Summary		Update Master Data Container
+//	@Description	Update an exisiting Master Data Container
+//	@Tags			data collection
+//	@Accept			json
+//	@Produce		json
+//	@Param			dataCollectionBody	body		requestDtos.UpdateDataCollection	true	"Data Collection Details"
+//	@Success		200					{object}	responseDtos.ResultResponse
+//	@Failure		400					{object}	responseDtos.ErrorResponse
+//	@Router			/updaterecords [put]
 func UpdateDataCollection(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var UpdateObject requestDtos.UpdateDataCollection
@@ -257,6 +352,17 @@ func UpdateDataCollection(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteMasterDataByID deletes an master data by ID
+//
+//	@Summary		Delete Master Data Container By ID
+//	@Description	Delete an existing Master Data Container By ID
+//	@Tags			master data container
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path	primitive.ObjectID	true	"DataID"
+//	@Success		200
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/masterdata/remove/{_id} [delete]
 func DeleteMasterDataByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)
@@ -282,6 +388,17 @@ func DeleteMasterDataByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteMasterDataRecordByID deletes an master data records by ID
+//
+//	@Summary		Delete Master Data Records By ID
+//	@Description	Delete an existing Master Data Record By ID
+//	@Tags			data collection
+//	@Accept			json
+//	@Produce		json
+//	@Param			_id	path	primitive.ObjectID	true	"CollectionID"
+//	@Success		200
+//	@Failure		400	{object}	responseDtos.ErrorResponse
+//	@Router			/record/remove/{_id} [delete]
 func DeleteMasterDataRecordByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	vars := mux.Vars(r)

@@ -62,6 +62,13 @@ var MDataRoutes = model.Routers{
 		Path:    "/updatemasterdata",
 		Handler: apiModel.UpdateMasterData,
 	},
+	//Will update MasterDataRecords based on Collection ID provided
+	model.Router{
+		Name:    "Update Records",
+		Method:  "PUT",
+		Path:    "/updaterecords",
+		Handler: apiModel.UpdateDataCollection,
+	},
 	//Will delete MasterData based on MasterData ID provided
 	model.Router{
 		Name:    "Delete MasterData by MasterDataID",

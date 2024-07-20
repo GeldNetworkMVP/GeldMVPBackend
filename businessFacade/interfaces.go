@@ -2,6 +2,7 @@ package businessFacade
 
 import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories/dataConfigRepository"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories/tokenGeldRepository"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories/userAndPermissions"
 )
 
@@ -11,4 +12,5 @@ var (
 	masterdataRepository   dataConfigRepository.MasterDataRepository
 	dataTemplateRepository dataConfigRepository.DataTemplateRepository
 	userRepository         userAndPermissions.UserRepository
+	tokensRepository       tokenGeldRepository.TokenRepository
 )
