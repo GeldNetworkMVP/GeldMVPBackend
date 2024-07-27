@@ -18,7 +18,7 @@ import (
 // @description	This is the Geld.Network Server.
 // @termsOfService	http://swagger.io/terms/
 func main() {
-	logs.InfoLogger.Println("Tracified Backend")
+	logs.InfoLogger.Println("Geld Backend")
 	// err := godotenv.Load()
 	// if err != nil {
 	// 	logrus.Println("Info Issue with loading .env file")
