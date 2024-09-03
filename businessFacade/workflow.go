@@ -5,6 +5,7 @@ import (
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
+
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -30,13 +31,36 @@ func DeleteWorkflowByID(WorkflowID primitive.ObjectID) error {
 	return workflowRepository.DeleteWorkflow(WorkflowID)
 }
 
-func GetWorkflowDataPagination(paginationData requestDtos.WorkflowForMatrixView) (model.WorkflowPaginatedresponse, error) {
-	filter := bson.M{
-		"userid": paginationData.UserID,
+// func GetWorkflowDataPagination(paginationData requestDtos.WorkflowForMatrixView) (model.WorkflowPaginatedresponse, error) {
+// 	filter := bson.M{
+// 		"userid": paginationData.UserID,
+// 	}
+// 	projection := GetProjectionDataMatrixViewForWorkflowData()
+// 	var data []model.Workflows
+// 	response, err := workflowRepository.GetWorkflowDataPaginatedResponse(filter, projection, paginationData.PageSize, paginationData.RequestedPage, "workflows", "userid", data, paginationData.SortType)
+// 	if err != nil {
+// 		logs.ErrorLogger.Println("Error occurred :", err.Error())
+// 		return model.WorkflowPaginatedresponse(response), err
+// 	}
+// 	return model.WorkflowPaginatedresponse(response), err
+// }
+
+func GetProjectionDataMatrixViewForWorkflowData() bson.D {
+	projection := bson.D{
+		{Key: "_id", Value: 1},
+		// {Key: "userid", Value: 1},
+		{Key: "workflowname", Value: 1},
+		{Key: "description", Value: 1},
+		{Key: "stages", Value: 1},
 	}
+	return projection
+}
+
+func TestWorkflowDataPagination(paginationData requestDtos.WorkflowForMatrixView) (model.WorkflowPaginatedresponse, error) {
+	filter := bson.M{}
 	projection := GetProjectionDataMatrixViewForWorkflowData()
 	var data []model.Workflows
-	response, err := workflowRepository.GetWorkflowDataPaginatedResponse(filter, projection, paginationData.PageSize, paginationData.RequestedPage, "workflows", "userid", data, paginationData.SortType)
+	response, err := workflowRepository.GetWorkflowDataPaginatedResponse(filter, projection, paginationData.PageSize, paginationData.RequestedPage, "workflows", "", data, paginationData.SortType)
 	if err != nil {
 		logs.ErrorLogger.Println("Error occurred :", err.Error())
 		return model.WorkflowPaginatedresponse(response), err
@@ -44,13 +68,6 @@ func GetWorkflowDataPagination(paginationData requestDtos.WorkflowForMatrixView)
 	return model.WorkflowPaginatedresponse(response), err
 }
 
-func GetProjectionDataMatrixViewForWorkflowData() bson.D {
-	projection := bson.D{
-		{Key: "_id", Value: 1},
-		{Key: "userid", Value: 1},
-		{Key: "workflowname", Value: 1},
-		{Key: "description", Value: 1},
-		{Key: "stages", Value: 1},
-	}
-	return projection
+func TestGetAllWorkflows() ([]model.Workflows, error) {
+	return workflowRepository.TestGetAllWorkflows()
 }

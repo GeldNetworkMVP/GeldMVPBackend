@@ -35,10 +35,25 @@ var WorkflowRoutes = model.Routers{
 		Handler: apiModel.DeleteWorkflowByID,
 	},
 	//Will return workflows based userid paginated response
+	// model.Router{
+	// 	Name:    "Get workflow data pagination",
+	// 	Method:  "Get",
+	// 	Path:    "/userworkflows/{userid}",
+	// 	Handler: apiModel.GetPaginatedWorkflowData,
+	// },
+
+	//Will return workflows based userid paginated response
 	model.Router{
-		Name:    "Get workflow data pagination",
+		Name:    "Test workflow data pagination",
 		Method:  "Get",
-		Path:    "/userworkflows/{userid}",
-		Handler: apiModel.GetPaginatedWorkflowData,
+		Path:    "/paginatedworkflows",
+		Handler: apiModel.TestPaginatedWorkflowData,
+	},
+	//Will return all the Workflows
+	model.Router{
+		Name:    "Test normal Get All Workflows",
+		Method:  "GET",
+		Path:    "/workflows/",
+		Handler: apiModel.TestGetAllWorkflows,
 	},
 }

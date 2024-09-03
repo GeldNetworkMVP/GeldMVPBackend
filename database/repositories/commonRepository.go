@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
@@ -55,13 +56,37 @@ func SaveDynamicData(model map[string]interface{}, collection string) (string, e
 	}
 	defer session.EndSession(context.Background())
 
-	rst, err := session.Client().Database(DbName).Collection(collection).InsertOne(context.TODO(), model)
+	templateName, ok := model["templatename"].(string)
+	if !ok {
+		return "", fmt.Errorf("templatename field is missing or not a string")
+	}
+
+	filter := bson.M{"templatename": templateName}
+	var existingDoc bson.M
+	collectionRef := session.Client().Database(DbName).Collection(collection)
+	err = collectionRef.FindOne(context.TODO(), filter).Decode(&existingDoc)
+	if err != nil && err != mongo.ErrNoDocuments {
+		// An error occurred other than "no documents found"
+		logs.ErrorLogger.Println("Error while checking existing template:", err.Error())
+		return "", err
+	}
+
+	if existingDoc != nil {
+		// A document with the same templatename already exists
+		return "", fmt.Errorf("a template with the name '%s' already exists", templateName)
+	}
+
+	// Proceed with insertion if no document with the same templatename is found
+	rst, err := collectionRef.InsertOne(context.TODO(), model)
 	if err != nil {
 		logs.ErrorLogger.Println(err.Error())
 		return "", err
 	}
+
+	// Retrieve the inserted document's ID and return it
 	id := rst.InsertedID.(primitive.ObjectID)
 	return id.Hex(), nil
+
 }
 
 func FindById(idName string, id string, collection string) (*mongo.Cursor, error) {
@@ -263,7 +288,36 @@ func PaginateResponse[PaginatedData paginateResponseType](filterConfig bson.M, p
 	return object, paginationdata, nil
 }
 
-func PaginateWithCustomSort[PaginatedData paginateResponseType](filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, sortyType int, object PaginatedData) (PaginatedData, model.PaginationTemplate, error) {
+// func PaginateWithCustomSort[PaginatedData paginateResponseType](filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, sortyType int, object PaginatedData) (PaginatedData, model.PaginationTemplate, error) {
+// 	var paginationdata model.PaginationTemplate
+// 	ctx := context.Background()
+// 	connectionString := os.Getenv("DB_URI")
+// 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionString))
+// 	if err != nil {
+// 		logs.ErrorLogger.Println("failed to connect to DB: ", err.Error())
+// 	}
+// 	defer client.Disconnect(ctx)
+// 	dbConnection := client.Database(DbName)
+// 	filter := filterConfig
+// 	limit := int64(pagesize)
+// 	page := int64(pageNo)
+// 	collection := dbConnection.Collection(collectionName)
+// 	projection := projectionData
+// 	paginatedData, err := paginate.New(collection).Context(ctx).Limit(limit).Page(page).Sort(sortingFeildName, sortyType).Select(projection).Filter(filter).Decode(&object).Find()
+// 	paginationdata.TotalElements = int32(paginatedData.Pagination.Total)
+// 	paginationdata.TotalPages = int32(paginatedData.Pagination.TotalPage)
+// 	paginationdata.Currentpage = int32(paginatedData.Pagination.Page)
+// 	paginationdata.PageSize = int32(paginatedData.Pagination.PerPage)
+// 	paginationdata.Previouspage = int32(paginatedData.Pagination.Prev)
+// 	paginationdata.NextPage = int32(paginatedData.Pagination.Next)
+// 	if err != nil {
+// 		logs.ErrorLogger.Println("Pagination failure :", err.Error())
+// 		return object, paginationdata, err
+// 	}
+// 	return object, paginationdata, nil
+// }
+
+func TestPaginateResponse[PaginatedData paginateResponseType](filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, object PaginatedData, sort int) (PaginatedData, model.PaginationTemplate, error) {
 	var paginationdata model.PaginationTemplate
 	ctx := context.Background()
 	connectionString := os.Getenv("DB_URI")
@@ -278,15 +332,28 @@ func PaginateWithCustomSort[PaginatedData paginateResponseType](filterConfig bso
 	page := int64(pageNo)
 	collection := dbConnection.Collection(collectionName)
 	projection := projectionData
-	paginatedData, err := paginate.New(collection).Context(ctx).Limit(limit).Page(page).Sort(sortingFeildName, sortyType).Select(projection).Filter(filter).Decode(&object).Find()
+
+	paginator := paginate.New(collection).Context(ctx).Limit(limit).Page(page).Select(projection).Filter(filter)
+
+	if sortingFeildName != "" {
+		paginator = paginator.Sort(sortingFeildName, sort)
+	}
+
+	paginatedData, paginateerr := paginator.Decode(&object).Find()
+
+	if paginateerr != nil {
+		logs.ErrorLogger.Println("Pagination failure:", paginateerr.Error())
+		return object, paginationdata, paginateerr
+	}
+
 	paginationdata.TotalElements = int32(paginatedData.Pagination.Total)
 	paginationdata.TotalPages = int32(paginatedData.Pagination.TotalPage)
 	paginationdata.Currentpage = int32(paginatedData.Pagination.Page)
 	paginationdata.PageSize = int32(paginatedData.Pagination.PerPage)
 	paginationdata.Previouspage = int32(paginatedData.Pagination.Prev)
 	paginationdata.NextPage = int32(paginatedData.Pagination.Next)
-	if err != nil {
-		logs.ErrorLogger.Println("Pagination failure :", err.Error())
+	if paginateerr != nil {
+		logs.ErrorLogger.Println("Pagination failure :", paginateerr.Error())
 		return object, paginationdata, err
 	}
 	return object, paginationdata, nil

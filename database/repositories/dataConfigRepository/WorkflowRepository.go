@@ -74,7 +74,7 @@ func (r *WorkflowRepository) DeleteWorkflow(workflowID primitive.ObjectID) error
 }
 
 func (r *WorkflowRepository) GetWorkflowDataPaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []model.Workflows, sort int) (model.WorkflowPaginatedresponse, error) {
-	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]model.Workflows](
+	contentResponse, paginationResponse, err := repositories.TestPaginateResponse[[]model.Workflows](
 		filterConfig,
 		projectionData,
 		pagesize,
@@ -91,4 +91,24 @@ func (r *WorkflowRepository) GetWorkflowDataPaginatedResponse(filterConfig bson.
 	response.Content = contentResponse
 	response.PaginationInfo = paginationResponse
 	return response, nil
+}
+
+func (r *WorkflowRepository) TestGetAllWorkflows() ([]model.Workflows, error) {
+	var allWorkflows []model.Workflows
+	findOptions := options.Find()
+	result, err := connections.GetSessionClient(Workflow).Find(context.TODO(), bson.D{{}}, findOptions)
+	if err != nil {
+		logs.ErrorLogger.Println("Error occured when trying to connect to DB and excute Find query in GetAllWorkflows:workflowRepository.go: ", err.Error())
+		return allWorkflows, err
+	}
+	for result.Next(context.TODO()) {
+		var workflow model.Workflows
+		err = result.Decode(&workflow)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection partner in GetAllworkflow:workflowRepository.go: ", err.Error())
+			return allWorkflows, err
+		}
+		allWorkflows = append(allWorkflows, workflow)
+	}
+	return allWorkflows, nil
 }

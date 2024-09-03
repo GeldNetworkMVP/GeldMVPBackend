@@ -3,6 +3,7 @@ package apiModel
 import (
 	"encoding/json"
 	"net/http"
+
 	"strconv"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
@@ -69,7 +70,12 @@ func GetWorkflowsByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[model.Workflows](w, result)
+		if result.WorkflowID == primitive.NilObjectID {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[model.Workflows](w, result)
+		}
 	}
 
 }
@@ -158,11 +164,14 @@ func DeleteWorkflowByID(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400		{object}	responseDtos.ErrorResponse
 //	@Failure		500		{object}	responseDtos.ErrorResponse
 //	@Router			/userworkflows/{userid} [get]
-func GetPaginatedWorkflowData(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json;")
-	vars := mux.Vars(r)
+
+//
+
+func TestPaginatedWorkflowData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	var pagination requestDtos.WorkflowForMatrixView
-	pagination.UserID = vars["userid"]
+
+	// Extract query parameters for pagination
 	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err1 != nil || pgsize <= 0 {
 		_pgsize, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFUALT_LIMIT"))
@@ -175,6 +184,7 @@ func GetPaginatedWorkflowData(w http.ResponseWriter, r *http.Request) {
 		pgsize = _pgsize
 	}
 	pagination.PageSize = int32(pgsize)
+
 	requestedPage, err2 := strconv.Atoi(r.URL.Query().Get("page"))
 	if err2 != nil || requestedPage <= -1 {
 		_requestedpage, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
@@ -186,9 +196,10 @@ func GetPaginatedWorkflowData(w http.ResponseWriter, r *http.Request) {
 		requestedPage = _requestedpage
 	}
 	pagination.RequestedPage = int32(requestedPage)
-	pagination.SortbyField = "userid"
+
+	// Remove sortbyField setting since we're not sorting by UserID anymore
 	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
-	if err != nil || sort != -1 && sort != 1 {
+	if err != nil || (sort != -1 && sort != 1) {
 		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
 		if envErr != nil {
 			errors.InternalError(w, "Something went wrong")
@@ -198,15 +209,42 @@ func GetPaginatedWorkflowData(w http.ResponseWriter, r *http.Request) {
 		sort = _sort
 	}
 	pagination.SortType = sort
-	results, err := businessFacade.GetWorkflowDataPagination(pagination)
+
+	// Call the business logic to get paginated workflow data
+	results, err := businessFacade.TestWorkflowDataPagination(pagination)
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 		return
 	}
+
 	if results.Content == nil {
 		commonResponse.NoContent(w, "")
 		return
 	}
-	commonResponse.SuccessStatus[model.WorkflowPaginatedresponse](w, results)
 
+	// Return the results in JSON format
+	commonResponse.SuccessStatus[model.WorkflowPaginatedresponse](w, results)
+}
+
+// Trigger the GetAllWorkflows() method that will return all the Workflows
+func TestGetAllWorkflows(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	results, err := businessFacade.TestGetAllWorkflows()
+	if err != nil {
+		ErrorMessage := err.Error()
+		errors.BadRequest(w, ErrorMessage)
+		return
+	} else {
+		if len(results) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			w.WriteHeader(http.StatusOK)
+			err := json.NewEncoder(w).Encode(results)
+			if err != nil {
+				logs.ErrorLogger.Println("Error occured while encoding JSON in GetAllWorkflow(WorkflowHandler): ", err.Error())
+			}
+			return
+		}
+	}
 }

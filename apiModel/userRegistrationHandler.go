@@ -3,7 +3,8 @@ package apiModel
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
+
+	// "strconv"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
@@ -44,9 +45,8 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 	} else {
 		encres := commons.Encrypt(requestCreateUser.Password)
 		obj := model.AppUser{
-			AppUserID:   requestCreateUser.AppUserID,
-			AdminUserID: requestCreateUser.AdminUserID,
-			Username:    requestCreateUser.Username,
+			AppUserID: requestCreateUser.AppUserID,
+			// AdminUserID: requestCreateUser.AdminUserID,
 			Email:       requestCreateUser.Email,
 			Contact:     requestCreateUser.Contact,
 			Designation: requestCreateUser.Designation,
@@ -153,7 +153,7 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 }
 
 /**
-**Description:Retrieves all workflows for the specified user ID in a paginated format
+**Description:Retrieves all users for the specified adminuser ID in a paginated format
  */
 //	@Summary		Get Paginated User Data
 //	@Description	Retrieves paginated user data associated with a specific admin user
@@ -169,55 +169,56 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400		{object}	responseDtos.ErrorResponse
 //	@Failure		500		{object}	responseDtos.ErrorResponse
 //	@Router			/appuser/admin/{userid} [get]
-func GetPaginatedUserData(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json;")
-	vars := mux.Vars(r)
-	var pagination requestDtos.UserForMatrixView
-	pagination.UserID = vars["userid"]
-	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
-	if err1 != nil || pgsize <= 0 {
-		_pgsize, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFUALT_LIMIT"))
-		logs.InfoLogger.Println("val returned from env: ", _pgsize)
-		if envErr != nil {
-			errors.InternalError(w, "Something went wrong")
-			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
-			return
-		}
-		pgsize = _pgsize
-	}
-	pagination.PageSize = int32(pgsize)
-	requestedPage, err2 := strconv.Atoi(r.URL.Query().Get("page"))
-	if err2 != nil || requestedPage <= -1 {
-		_requestedpage, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
-		if envErr != nil {
-			errors.InternalError(w, "Something went wrong")
-			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
-			return
-		}
-		requestedPage = _requestedpage
-	}
-	pagination.RequestedPage = int32(requestedPage)
-	pagination.SortbyField = "userid"
-	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
-	if err != nil || sort != -1 && sort != 1 {
-		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
-		if envErr != nil {
-			errors.InternalError(w, "Something went wrong")
-			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
-			return
-		}
-		sort = _sort
-	}
-	pagination.SortType = sort
-	results, err := businessFacade.GetUserDataPagination(pagination)
-	if err != nil {
-		errors.BadRequest(w, err.Error())
-		return
-	}
-	if results.Content == nil {
-		commonResponse.NoContent(w, "")
-		return
-	}
-	commonResponse.SuccessStatus[model.UserPaginatedResponse](w, results)
 
-}
+// func GetPaginatedUserData(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json;")
+// 	vars := mux.Vars(r)
+// 	var pagination requestDtos.UserForMatrixView
+// 	pagination.UserID = vars["userid"]
+// 	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
+// 	if err1 != nil || pgsize <= 0 {
+// 		_pgsize, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFUALT_LIMIT"))
+// 		logs.InfoLogger.Println("val returned from env: ", _pgsize)
+// 		if envErr != nil {
+// 			errors.InternalError(w, "Something went wrong")
+// 			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+// 			return
+// 		}
+// 		pgsize = _pgsize
+// 	}
+// 	pagination.PageSize = int32(pgsize)
+// 	requestedPage, err2 := strconv.Atoi(r.URL.Query().Get("page"))
+// 	if err2 != nil || requestedPage <= -1 {
+// 		_requestedpage, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
+// 		if envErr != nil {
+// 			errors.InternalError(w, "Something went wrong")
+// 			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+// 			return
+// 		}
+// 		requestedPage = _requestedpage
+// 	}
+// 	pagination.RequestedPage = int32(requestedPage)
+// 	pagination.SortbyField = "userid"
+// 	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
+// 	if err != nil || sort != -1 && sort != 1 {
+// 		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
+// 		if envErr != nil {
+// 			errors.InternalError(w, "Something went wrong")
+// 			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+// 			return
+// 		}
+// 		sort = _sort
+// 	}
+// 	pagination.SortType = sort
+// 	results, err := businessFacade.GetUserDataPagination(pagination)
+// 	if err != nil {
+// 		errors.BadRequest(w, err.Error())
+// 		return
+// 	}
+// 	if results.Content == nil {
+// 		commonResponse.NoContent(w, "")
+// 		return
+// 	}
+// 	commonResponse.SuccessStatus[model.UserPaginatedResponse](w, results)
+
+// }

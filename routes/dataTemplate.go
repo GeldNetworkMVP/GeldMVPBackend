@@ -34,4 +34,11 @@ var DataTemplateRoutes = model.Routers{
 		Path:    "/geldtemplate/html/{plotid}",
 		Handler: apiModel.GetHTMLByPlotID,
 	},
+	//Route will be used to get last data template according to PlotID
+	model.Router{
+		Name:    "Get Last DataTemplate By PlotID",
+		Method:  "GET",
+		Path:    "/lastgeldtemplate/plotid/{plotid}",
+		Handler: apiModel.GetLastTemplateByPlotID,
+	},
 }
