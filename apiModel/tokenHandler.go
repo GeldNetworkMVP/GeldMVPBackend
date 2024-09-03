@@ -146,6 +146,7 @@ func UpdateTokenStatus(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400		{object}	responseDtos.ErrorResponse
 //	@Failure		500		{object}	responseDtos.ErrorResponse
 //	@Router			/tokens/{status} [get]
+
 func PaginatedGetAllTokensByStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
 	vars := mux.Vars(r)
@@ -174,7 +175,7 @@ func PaginatedGetAllTokensByStatus(w http.ResponseWriter, r *http.Request) {
 		requestedPage = _requestedpage
 	}
 	pagination.RequestedPage = int32(requestedPage)
-	pagination.SortbyField = "userid"
+	pagination.SortbyField = "status"
 	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
 	if err != nil || sort != -1 && sort != 1 {
 		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))

@@ -27,24 +27,24 @@ func GetMasterDataByID(mDataID string) (model.MasterData, error) {
 	return masterdataRepository.GetMasterDataByID(mDataID)
 }
 
-func GetMasterDataPagination(paginationData requestDtos.MasterDataForMatrixView) (model.MDataPaginatedresponse, error) {
-	filter := bson.M{
-		"userid": paginationData.UserID,
-	}
-	projection := GetProjectionDataMatrixViewForMasterData()
-	var mdata []model.MasterData
-	response, err := masterdataRepository.GetMasterDataPaginatedResponse(filter, projection, paginationData.PageSize, paginationData.RequestedPage, "masterdata", "userid", mdata, paginationData.SortType)
-	if err != nil {
-		logs.ErrorLogger.Println("Error occurred :", err.Error())
-		return model.MDataPaginatedresponse(response), err
-	}
-	return model.MDataPaginatedresponse(response), err
-}
+// func GetMasterDataPagination(paginationData requestDtos.MasterDataForMatrixView) (model.MDataPaginatedresponse, error) {
+// 	filter := bson.M{
+// 		"userid": paginationData.UserID,
+// 	}
+// 	projection := GetProjectionDataMatrixViewForMasterData()
+// 	var mdata []model.MasterData
+// 	response, err := masterdataRepository.GetMasterDataPaginatedResponse(filter, projection, paginationData.PageSize, paginationData.RequestedPage, "masterdata", "userid", mdata, paginationData.SortType)
+// 	if err != nil {
+// 		logs.ErrorLogger.Println("Error occurred :", err.Error())
+// 		return model.MDataPaginatedresponse(response), err
+// 	}
+// 	return model.MDataPaginatedresponse(response), err
+// }
 
 func GetProjectionDataMatrixViewForMasterData() bson.D {
 	projection := bson.D{
 		{Key: "_id", Value: 1},
-		{Key: "userid", Value: 1},
+		// {Key: "userid", Value: 1},
 		{Key: "dataname", Value: 1},
 		{Key: "description", Value: 1},
 		{Key: "dataCollection", Value: 1},

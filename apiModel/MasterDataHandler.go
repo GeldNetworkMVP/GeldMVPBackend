@@ -22,15 +22,15 @@ import (
 */
 //Retrevies data from the Json Body and decodes it into a model class (Master Data).Then the CreateMasterData() method is invoked from BusinessFacade
 
-//	@Summary		Save Master Data Container submitted by Geld Configurations
-//	@Description	This creates a container to whole master data records per type
-//	@Tags			master data container
-//	@Accept			json
-//	@Produce		json
-//	@Param			masterDataContainerBody	body		model.MasterData	true	"Master Data Container Details"
-//	@Success		200						{object}	responseDtos.ResultResponse
-//	@Failure		400						{object}	responseDtos.ErrorResponse
-//	@Router			/masterdata/save [post]
+// @Summary		Save Master Data Container submitted by Geld Configurations
+// @Description	This creates a container to whole master data records per type
+// @Tags			master data container
+// @Accept			json
+// @Produce		json
+// @Param			masterDataContainerBody	body		model.MasterData	true	"Master Data Container Details"
+// @Success		200						{object}	responseDtos.ResultResponse
+// @Failure		400						{object}	responseDtos.ErrorResponse
+// @Router			/masterdata/save [post]
 func CreateMasterData(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var requestCreateMdata model.MasterData
@@ -54,15 +54,15 @@ func CreateMasterData(W http.ResponseWriter, r *http.Request) {
 
 // Retrevies data from the Json Body and decodes it into a model class (Data Collection).Then the CreateDataCollection() method is invoked from BusinessFacade
 
-//	@Summary		Save Data Collection for Master Data Container
-//	@Description	This creates a collections for Master Data Containers based on container type
-//	@Tags			data collection
-//	@Accept			json
-//	@Produce		json
-//	@Param			dataCollectionBody	body		model.DataCollection	true	"Data Collection Details"
-//	@Success		200					{object}	responseDtos.ResultResponse
-//	@Failure		400					{object}	responseDtos.ErrorResponse
-//	@Router			/record/save [post]
+// @Summary		Save Data Collection for Master Data Container
+// @Description	This creates a collections for Master Data Containers based on container type
+// @Tags			data collection
+// @Accept			json
+// @Produce		json
+// @Param			dataCollectionBody	body		model.DataCollection	true	"Data Collection Details"
+// @Success		200					{object}	responseDtos.ResultResponse
+// @Failure		400					{object}	responseDtos.ErrorResponse
+// @Router			/record/save [post]
 func CreateDataCollection(W http.ResponseWriter, r *http.Request) {
 	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	var requestCreateMdataCollection model.DataCollection
@@ -85,6 +85,7 @@ func CreateDataCollection(W http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetMasterDataByID() method that will return The specific MasterData with the ID passed via the API
+//
 //	@Summary		Get Master Data by ID
 //	@Description	Get an existing Master Data Container ID
 //	@Tags			master data container
@@ -107,6 +108,7 @@ func GetMasterDataByID(w http.ResponseWriter, r *http.Request) {
 }
 
 // Trigger the GetRecordDataByID() method that will return The specific RecordData with the ID passed via the API
+//
 //	@Summary		Get Record Data By ID
 //	@Description	Get an existing Record Data By ID
 //	@Tags			data collection
@@ -123,12 +125,18 @@ func GetRecordDataByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[model.DataCollection](w, result)
+		if result.CollectionID == primitive.NilObjectID {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[model.DataCollection](w, result)
+		}
 	}
 
 }
 
 // Trigger the GetRecordDataByMasterDataID() method that will return The specific RecordData with the MasterDataID passed via the API
+//
 //	@Summary		Get Record Data By Master Data ID
 //	@Description	Get an existing Record Data By Master Data ID
 //	@Tags			data collection
@@ -145,7 +153,12 @@ func GetRecordDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[[]model.DataCollection](w, result)
+		if len(result) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[[]model.DataCollection](w, result)
+		}
 	}
 
 }
@@ -167,58 +180,59 @@ func GetRecordDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400		{object}	responseDtos.ErrorResponse
 //	@Failure		500		{object}	responseDtos.ErrorResponse
 //	@Router			/usermasterdata/{userid} [get]
-func GetPaginatedMasterData(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json;")
-	vars := mux.Vars(r)
-	var pagination requestDtos.MasterDataForMatrixView
-	pagination.UserID = vars["userid"]
-	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
-	if err1 != nil || pgsize <= 0 {
-		_pgsize, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFUALT_LIMIT"))
-		logs.InfoLogger.Println("val returned from env: ", _pgsize)
-		if envErr != nil {
-			errors.InternalError(w, "Something went wrong")
-			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
-			return
-		}
-		pgsize = _pgsize
-	}
-	pagination.PageSize = int32(pgsize)
-	requestedPage, err2 := strconv.Atoi(r.URL.Query().Get("page"))
-	if err2 != nil || requestedPage <= -1 {
-		_requestedpage, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
-		if envErr != nil {
-			errors.InternalError(w, "Something went wrong")
-			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
-			return
-		}
-		requestedPage = _requestedpage
-	}
-	pagination.RequestedPage = int32(requestedPage)
-	pagination.SortbyField = "userid"
-	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
-	if err != nil || sort != -1 && sort != 1 {
-		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
-		if envErr != nil {
-			errors.InternalError(w, "Something went wrong")
-			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
-			return
-		}
-		sort = _sort
-	}
-	pagination.SortType = sort
-	results, err := businessFacade.GetMasterDataPagination(pagination)
-	if err != nil {
-		errors.BadRequest(w, err.Error())
-		return
-	}
-	if results.Content == nil {
-		commonResponse.NoContent(w, "")
-		return
-	}
-	commonResponse.SuccessStatus[model.MDataPaginatedresponse](w, results)
 
-}
+// func GetPaginatedMasterData(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json;")
+// 	vars := mux.Vars(r)
+// 	var pagination requestDtos.MasterDataForMatrixView
+// 	pagination.UserID = vars["userid"]
+// 	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
+// 	if err1 != nil || pgsize <= 0 {
+// 		_pgsize, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFUALT_LIMIT"))
+// 		logs.InfoLogger.Println("val returned from env: ", _pgsize)
+// 		if envErr != nil {
+// 			errors.InternalError(w, "Something went wrong")
+// 			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+// 			return
+// 		}
+// 		pgsize = _pgsize
+// 	}
+// 	pagination.PageSize = int32(pgsize)
+// 	requestedPage, err2 := strconv.Atoi(r.URL.Query().Get("page"))
+// 	if err2 != nil || requestedPage <= -1 {
+// 		_requestedpage, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
+// 		if envErr != nil {
+// 			errors.InternalError(w, "Something went wrong")
+// 			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+// 			return
+// 		}
+// 		requestedPage = _requestedpage
+// 	}
+// 	pagination.RequestedPage = int32(requestedPage)
+// 	pagination.SortbyField = "userid"
+// 	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
+// 	if err != nil || sort != -1 && sort != 1 {
+// 		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
+// 		if envErr != nil {
+// 			errors.InternalError(w, "Something went wrong")
+// 			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+// 			return
+// 		}
+// 		sort = _sort
+// 	}
+// 	pagination.SortType = sort
+// 	results, err := businessFacade.GetMasterDataPagination(pagination)
+// 	if err != nil {
+// 		errors.BadRequest(w, err.Error())
+// 		return
+// 	}
+// 	if results.Content == nil {
+// 		commonResponse.NoContent(w, "")
+// 		return
+// 	}
+// 	commonResponse.SuccessStatus[model.MDataPaginatedresponse](w, results)
+
+// }
 
 /**
 **Description:Retrieves all data collections for the specified master data ID in a paginated format
@@ -422,4 +436,20 @@ func DeleteMasterDataRecordByID(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+}
+
+func GetPlotDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	result, err := businessFacade.GetRecordDataByMasterDataID("66d71f5af2999f18ef9f9d30")
+	if err != nil {
+		errors.BadRequest(w, err.Error())
+	} else {
+		if len(result) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[[]model.DataCollection](w, result)
+		}
+	}
+
 }

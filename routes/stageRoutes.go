@@ -35,10 +35,17 @@ var StageRoutes = model.Routers{
 		Handler: apiModel.DeleteStageByID,
 	},
 	//Will return stages based userid paginated response
+	// model.Router{
+	// 	Name:    "Get stage data  pagination",
+	// 	Method:  "Get",
+	// 	Path:    "/userstage/{userid}",
+	// 	Handler: apiModel.GetPaginatedStageData,
+	// },
+	//Will return Stages based on Stages Name provided
 	model.Router{
-		Name:    "Get stage data  pagination",
-		Method:  "Get",
-		Path:    "/userstage/{userid}",
-		Handler: apiModel.GetPaginatedStageData,
+		Name:    "Get Stages by Stage Name",
+		Method:  "GET",
+		Path:    "/stagename/{stagename}",
+		Handler: apiModel.GetStagesByName,
 	},
 }

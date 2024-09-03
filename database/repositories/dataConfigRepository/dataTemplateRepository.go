@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type DataTemplateRepository struct{}
@@ -60,4 +61,22 @@ func (r *DataTemplateRepository) GetTemplatesByPlotID(plotID string) ([]map[stri
 		return nil, err
 	}
 	return templates, nil
+}
+
+func (r *DataTemplateRepository) GetLastTemplateByPlotID(plotID string) (map[string]interface{}, error) {
+	ctx := context.TODO()
+
+	opts := options.FindOne().SetSort(bson.D{{Key: "_id", Value: -1}})
+	var result map[string]interface{}
+	err := connections.GetSessionClient(DataTemplate).FindOne(ctx, bson.M{"plotid": plotID}, opts).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			logs.ErrorLogger.Println("No template found for plotID:", plotID)
+			return nil, nil
+		}
+		logs.ErrorLogger.Println("Error retrieving template:", err.Error())
+		return nil, err
+	}
+
+	return result, nil
 }

@@ -15,7 +15,7 @@ var AppUserRoutes = model.Routers{
 	},
 	//Will return Users based on Users ID provided
 	model.Router{
-		Name:    "Get User by UserID",
+		Name:    "Get User by ID",
 		Method:  "GET",
 		Path:    "/appuser/{_id}",
 		Handler: apiModel.GetUsersByID,
@@ -29,16 +29,16 @@ var AppUserRoutes = model.Routers{
 	},
 	//Will delete User based on User ID provided
 	model.Router{
-		Name:    "Delete User by UserID",
+		Name:    "Delete User by ID",
 		Method:  "DELETE",
 		Path:    "/appuser/remove/{_id}",
 		Handler: apiModel.DeleteUserByID,
 	},
 	//Will return users based adminuserid paginated response
-	model.Router{
-		Name:    "Get user data pagination",
-		Method:  "Get",
-		Path:    "/appuser/admin/{userid}",
-		Handler: apiModel.GetPaginatedUserData,
-	},
+	// model.Router{
+	// 	Name:    "Get user data pagination",
+	// 	Method:  "Get",
+	// 	Path:    "/appuser/admin/{userid}",
+	// 	Handler: apiModel.GetPaginatedUserData,
+	// },
 }

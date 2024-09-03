@@ -3,18 +3,17 @@ package requestDtos
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type UpdateUser struct {
-	AppUserID   primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	AdminUserID string             `json:"userid" bson:"userid"`
-	Username    string             `json:"username" bson:"username"`
-	Email       string             `json:"email" bson:"email"`
-	Contact     string             `json:"contact" bson:"contact"`
-	Designation string             `json:"designation" bson:"designation"`
-	EncPW       string             `json:"encpw" bson:"encpw"`
-	Status      string             `json:"status" bson:"status"`
+	AppUserID primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	// AdminUserID string             `json:"userid" bson:"userid"`
+	Email       string `json:"email" bson:"email"`
+	Contact     string `json:"contact" bson:"contact"`
+	Designation string `json:"designation" bson:"designation"`
+	EncPW       string `json:"encpw" bson:"encpw"`
+	Status      string `json:"status" bson:"status"`
 }
 
 type UserForMatrixView struct {
-	UserID        string `json:"userid" bson:"userid"`
+	// UserID        string `json:"userid" bson:"userid"`
 	PageSize      int32  `json:"pagesize" bson:"pagesize"`
 	RequestedPage int32  `json:"requestedPage" bson:"requestedPage" `
 	SortbyField   string `json:"sortbyfield" bson:"sortbyfield" `

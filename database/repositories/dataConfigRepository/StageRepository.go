@@ -90,3 +90,20 @@ func (r *StageRepository) GetStageDataPaginatedResponse(filterConfig bson.M, pro
 	response.PaginationInfo = paginationResponse
 	return response, nil
 }
+
+func (r *StageRepository) GetStagesByName(stageName string) (model.Stages, error) {
+	var stages model.Stages
+
+	rst, err := connections.GetSessionClient("stages").Find(context.TODO(), bson.M{"stagename": stageName})
+	if err != nil {
+		return stages, err
+	}
+	for rst.Next(context.TODO()) {
+		err = rst.Decode(&stages)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection document in GetStageByName:stageRepository.go: ", err.Error())
+			return stages, err
+		}
+	}
+	return stages, err
+}

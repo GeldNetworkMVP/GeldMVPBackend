@@ -42,15 +42,15 @@ var MDataRoutes = model.Routers{
 		Handler: apiModel.GetRecordDataByMasterDataID,
 	},
 	//Will return user based masterdata paginated response
+	// model.Router{
+	// 	Name:    "Get Master data pagination",
+	// 	Method:  "Get",
+	// 	Path:    "/usermasterdata/{userid}",
+	// 	Handler: apiModel.GetPaginatedMasterData,
+	// },
+	//Will return record paginated response
 	model.Router{
-		Name:    "Get Master data pagination",
-		Method:  "Get",
-		Path:    "/usermasterdata/{userid}",
-		Handler: apiModel.GetPaginatedMasterData,
-	},
-	//Will return master data based record paginated response
-	model.Router{
-		Name:    "Get Master data record pagination",
+		Name:    "Get  record pagination",
 		Method:  "Get",
 		Path:    "/masterrecord/{dataid}",
 		Handler: apiModel.GetPaginatedData,
@@ -82,5 +82,12 @@ var MDataRoutes = model.Routers{
 		Method:  "DELETE",
 		Path:    "/record/remove/{_id}",
 		Handler: apiModel.DeleteMasterDataRecordByID,
+	},
+	//Get all Plots for Plot ID
+	model.Router{
+		Name:    "Get plot data record",
+		Method:  "Get",
+		Path:    "/plotrecord",
+		Handler: apiModel.GetPlotDataByMasterDataID,
 	},
 }

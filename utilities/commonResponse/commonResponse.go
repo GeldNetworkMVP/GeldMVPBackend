@@ -10,7 +10,7 @@ import (
 )
 
 type resultType interface {
-	model.Workflows | string | model.MasterData | model.Stages | model.DataCollection | []model.DataCollection | []model.Workflows | []model.Stages | []model.MasterData | model.MDataPaginatedresponse | model.DataPaginatedresponse | model.StagePaginatedresponse | model.WorkflowPaginatedresponse | model.AppUser | model.UserPaginatedResponse | model.Tokens | model.TokenPaginatedresponse | []map[string]interface{}
+	model.Workflows | string | model.MasterData | model.Stages | model.DataCollection | []model.DataCollection | []model.Workflows | []model.Stages | []model.MasterData | model.MDataPaginatedresponse | model.DataPaginatedresponse | model.StagePaginatedresponse | model.WorkflowPaginatedresponse | model.AppUser | model.UserPaginatedResponse | model.Tokens | model.TokenPaginatedresponse | []map[string]interface{} | map[string]interface{}
 }
 
 func SuccessStatus[T resultType](w http.ResponseWriter, result T) {
@@ -43,4 +43,17 @@ func RespondWithJSON(response http.ResponseWriter, statusCode int, data interfac
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(statusCode)
 	response.Write(result)
+}
+
+func NotFound(w http.ResponseWriter, message string) {
+	w.WriteHeader(http.StatusNotFound)
+	response := responseDtos.ErrorResponse{
+		Message: message,
+		Status:  http.StatusNotFound,
+		Error:   "No record found in result",
+	}
+	err := json.NewEncoder(w).Encode(response)
+	if err != nil {
+		logs.ErrorLogger.Println(err)
+	}
 }
