@@ -41,4 +41,10 @@ var DataTemplateRoutes = model.Routers{
 		Path:    "/lastgeldtemplate/plotid/{plotid}",
 		Handler: apiModel.GetLastTemplateByPlotID,
 	},
+	model.Router{
+		Name:    "Get DataTemplate By User",
+		Method:  "GET",
+		Path:    "/geldtemplate/user/{userid}",
+		Handler: apiModel.GetTemplateByUser,
+	},
 }

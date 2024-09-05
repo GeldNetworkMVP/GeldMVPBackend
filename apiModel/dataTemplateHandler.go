@@ -87,7 +87,12 @@ func GetTemplateByPlotID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[[]map[string]interface{}](w, result)
+		if len(result) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[[]map[string]interface{}](w, result)
+		}
 	}
 
 }
@@ -119,6 +124,23 @@ func GetLastTemplateByPlotID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
 	result, err := businessFacade.GetLastTemplatesByPlotID(vars["plotid"])
+	if err != nil {
+		errors.BadRequest(w, err.Error())
+	} else {
+		if len(result) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[map[string]interface{}](w, result)
+		}
+	}
+
+}
+
+func GetTemplateByUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	vars := mux.Vars(r)
+	result, err := businessFacade.GetTemplatesByUser(vars["userid"])
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
