@@ -19,3 +19,7 @@ func GetTemplatesByPlotID(plotID string) ([]map[string]interface{}, error) {
 func GetLastTemplatesByPlotID(plotID string) (map[string]interface{}, error) {
 	return dataTemplateRepository.GetLastTemplateByPlotID(plotID)
 }
+
+func GetTemplatesByUser(userID string) (map[string]interface{}, error) {
+	return dataTemplateRepository.GetTemplateByUser(userID)
+}
