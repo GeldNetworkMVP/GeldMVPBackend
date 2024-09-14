@@ -148,7 +148,7 @@ func GetTemplateByUser(w http.ResponseWriter, r *http.Request) {
 			commonResponse.NotFound(w, "No record found for the given query.")
 			return
 		} else {
-			commonResponse.SuccessStatus[map[string]interface{}](w, result)
+			commonResponse.SuccessStatus[[]map[string]interface{}](w, result)
 		}
 	}
 
