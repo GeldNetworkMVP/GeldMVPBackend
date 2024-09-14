@@ -81,16 +81,26 @@ func (r *DataTemplateRepository) GetLastTemplateByPlotID(plotID string) (map[str
 	return result, nil
 }
 
-func (r *DataTemplateRepository) GetTemplateByUser(userID string) (map[string]interface{}, error) {
+func (r *DataTemplateRepository) GetTemplateByUser(userID string) ([]map[string]interface{}, error) {
 	ctx := context.TODO()
-	result := bson.M{}
-	err := connections.GetSessionClient(DataTemplate).FindOne(ctx, bson.M{"userid": userID}).Decode(&result)
+	cursor, err := connections.GetSessionClient(DataTemplate).Find(ctx, bson.M{"userid": userID})
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, errors.New("Template not found")
-		}
-		logs.ErrorLogger.Println("Error retrieving template:", err.Error())
 		return nil, err
 	}
-	return result, nil
+
+	var templates []map[string]interface{}
+
+	for cursor.Next(ctx) {
+		var result map[string]interface{}
+		err := cursor.Decode(&result)
+		if err != nil {
+			logs.ErrorLogger.Println("Error retrieving template:", err.Error())
+			return nil, err
+		}
+		templates = append(templates, result)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return templates, nil
 }
