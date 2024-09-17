@@ -6,6 +6,7 @@ import (
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/connections"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,7 +19,7 @@ type DataTemplateRepository struct{}
 var DataTemplate = "dataTemplate"
 
 func (r *DataTemplateRepository) SaveDataTemplate(model map[string]interface{}) (string, error) {
-	return repositories.SaveDynamicData(model, DataTemplate)
+	return repositories.SaveDynamicData(model, DataTemplate, "templatename")
 }
 
 func (r *DataTemplateRepository) GetTemplateByID(templateID string) (map[string]interface{}, error) {
@@ -103,4 +104,24 @@ func (r *DataTemplateRepository) GetTemplateByUser(userID string) ([]map[string]
 		return nil, err
 	}
 	return templates, nil
+}
+
+func (r *DataTemplateRepository) GetTemplatePaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []map[string]interface{}, sort int) (model.DataPaginatedresponse, error) {
+	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]map[string]interface{}](
+		filterConfig,
+		projectionData,
+		pagesize,
+		pageNo,
+		collectionName,
+		sortingFeildName,
+		data,
+		sort,
+	)
+	var response model.DataPaginatedresponse
+	if err != nil {
+		return response, err
+	}
+	response.Content = contentResponse
+	response.PaginationInfo = paginationResponse
+	return response, nil
 }

@@ -57,3 +57,7 @@ func GetProjectionDataMatrixViewForStageData() bson.D {
 func GetStagesByName(stageName string) (model.Stages, error) {
 	return stageRepository.GetStagesByName(stageName)
 }
+
+func TestGetAllStages() ([]model.Stages, error) {
+	return stageRepository.TestGetAllStages()
+}

@@ -107,3 +107,23 @@ func (r *StageRepository) GetStagesByName(stageName string) (model.Stages, error
 	}
 	return stages, err
 }
+
+func (r *StageRepository) TestGetAllStages() ([]model.Stages, error) {
+	var allStages []model.Stages
+	findOptions := options.Find()
+	result, err := connections.GetSessionClient(Stages).Find(context.TODO(), bson.D{{}}, findOptions)
+	if err != nil {
+		logs.ErrorLogger.Println("Error occured when trying to connect to DB and excute Find query in GetAllStages:StagesRepository.go: ", err.Error())
+		return allStages, err
+	}
+	for result.Next(context.TODO()) {
+		var stage model.Stages
+		err = result.Decode(&stage)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection partner in GetAllStages:StagesRepository.go: ", err.Error())
+			return allStages, err
+		}
+		allStages = append(allStages, stage)
+	}
+	return allStages, nil
+}

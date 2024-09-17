@@ -47,4 +47,10 @@ var DataTemplateRoutes = model.Routers{
 		Path:    "/geldtemplate/user/{userid}",
 		Handler: apiModel.GetTemplateByUser,
 	},
+	model.Router{
+		Name:    "Get  template pagination",
+		Method:  "Get",
+		Path:    "/submittedtemplate/{userid}",
+		Handler: apiModel.GetPaginatedDataSubmitted,
+	},
 }

@@ -4,11 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/commonResponse"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/errors"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"github.com/gorilla/mux"
 )
 
@@ -151,5 +156,67 @@ func GetTemplateByUser(w http.ResponseWriter, r *http.Request) {
 			commonResponse.SuccessStatus[[]map[string]interface{}](w, result)
 		}
 	}
+
+}
+
+//for future implementation of paginated responses on the mobile app to get templates submitted
+
+func GetPaginatedDataSubmitted(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json;")
+	vars := mux.Vars(r)
+	var pagination requestDtos.TemplateForMatrixView
+	pagination.UserID = vars["userid"]
+	fieldsQuery := r.URL.Query().Get("fields")
+	if fieldsQuery != "" {
+		pagination.Fields = strings.Split(fieldsQuery, ",")
+	} else {
+		pagination.Fields = []string{}
+	}
+
+	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err1 != nil || pgsize <= 0 {
+		_pgsize, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFUALT_LIMIT"))
+		logs.InfoLogger.Println("val returned from env: ", _pgsize)
+		if envErr != nil {
+			errors.InternalError(w, "Something went wrong")
+			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+			return
+		}
+		pgsize = _pgsize
+	}
+	pagination.PageSize = int32(pgsize)
+	requestedPage, err2 := strconv.Atoi(r.URL.Query().Get("page"))
+	if err2 != nil || requestedPage <= -1 {
+		_requestedpage, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
+		if envErr != nil {
+			errors.InternalError(w, "Something went wrong")
+			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+			return
+		}
+		requestedPage = _requestedpage
+	}
+	pagination.RequestedPage = int32(requestedPage)
+	pagination.SortbyField = "userid"
+	sort, err := strconv.Atoi(r.URL.Query().Get("sort"))
+	if err != nil || sort != -1 && sort != 1 {
+		_sort, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFAULT_PAGE"))
+		if envErr != nil {
+			errors.InternalError(w, "Something went wrong")
+			logs.ErrorLogger.Println("Failed to load value from env: ", envErr.Error())
+			return
+		}
+		sort = _sort
+	}
+	pagination.SortType = sort
+	results, err := businessFacade.GetTemplatePagination(pagination)
+	if err != nil {
+		errors.BadRequest(w, err.Error())
+		return
+	}
+	if results.Content == nil {
+		commonResponse.NoContent(w, "")
+		return
+	}
+	commonResponse.SuccessStatus[model.DataPaginatedresponse](w, results)
 
 }

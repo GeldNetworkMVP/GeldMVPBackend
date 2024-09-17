@@ -41,7 +41,7 @@ func Save[T model.SaveType](model T, collection string) (string, error) {
 	return id.Hex(), nil
 }
 
-func SaveDynamicData(model map[string]interface{}, collection string) (string, error) {
+func SaveDynamicData(model map[string]interface{}, collection string, check string) (string, error) {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(commons.GoDotEnvVariable("DB_URI")))
 	if err != nil {
 		logs.ErrorLogger.Println(err.Error())
@@ -56,7 +56,7 @@ func SaveDynamicData(model map[string]interface{}, collection string) (string, e
 	}
 	defer session.EndSession(context.Background())
 
-	templateName, ok := model["templatename"].(string)
+	templateName, ok := model[check].(string)
 	if !ok {
 		return "", fmt.Errorf("templatename field is missing or not a string")
 	}
@@ -66,24 +66,20 @@ func SaveDynamicData(model map[string]interface{}, collection string) (string, e
 	collectionRef := session.Client().Database(DbName).Collection(collection)
 	err = collectionRef.FindOne(context.TODO(), filter).Decode(&existingDoc)
 	if err != nil && err != mongo.ErrNoDocuments {
-		// An error occurred other than "no documents found"
 		logs.ErrorLogger.Println("Error while checking existing template:", err.Error())
 		return "", err
 	}
 
 	if existingDoc != nil {
-		// A document with the same templatename already exists
 		return "", fmt.Errorf("a template with the name '%s' already exists", templateName)
 	}
 
-	// Proceed with insertion if no document with the same templatename is found
 	rst, err := collectionRef.InsertOne(context.TODO(), model)
 	if err != nil {
 		logs.ErrorLogger.Println(err.Error())
 		return "", err
 	}
 
-	// Retrieve the inserted document's ID and return it
 	id := rst.InsertedID.(primitive.ObjectID)
 	return id.Hex(), nil
 
@@ -256,7 +252,7 @@ func Remove(idName string, id, collection string) (int64, error) {
 }
 
 type paginateResponseType interface {
-	[]model.Workflows | []model.MasterData | []model.Stages | []model.DataCollection | []model.AppUser | []model.Tokens
+	[]model.Workflows | []model.MasterData | []model.Stages | []model.DataCollection | []model.AppUser | []model.Tokens | []map[string]interface{}
 }
 
 func PaginateResponse[PaginatedData paginateResponseType](filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, object PaginatedData, sort int) (PaginatedData, model.PaginationTemplate, error) {

@@ -2,6 +2,7 @@ package dataConfigRepository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/connections"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories"
@@ -10,6 +11,7 @@ import (
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -22,8 +24,8 @@ func (r *MasterDataRepository) CreateMasterData(mdata model.MasterData) (string,
 	return repositories.Save(mdata, MasterData)
 }
 
-func (r *MasterDataRepository) CreateDataCollection(data model.DataCollection) (string, error) {
-	return repositories.Save(data, DataCollection)
+func (r *MasterDataRepository) CreateDataCollection(data map[string]interface{}) (string, error) {
+	return repositories.SaveDynamicData(data, DataCollection, "name")
 }
 
 func (r *MasterDataRepository) GetMasterDataByID(mDataID string) (model.MasterData, error) {
@@ -46,40 +48,44 @@ func (r *MasterDataRepository) GetMasterDataByID(mDataID string) (model.MasterDa
 	return mdata, err
 }
 
-func (r *MasterDataRepository) GetRecordByID(ID string) (model.DataCollection, error) {
-	var data model.DataCollection
+func (r *MasterDataRepository) GetRecordByID(ID string) (map[string]interface{}, error) {
 	objectId, err := primitive.ObjectIDFromHex(ID)
 	if err != nil {
-		logs.WarningLogger.Println("Error Occured when trying to convert hex string in to Object(ID) in GetRecordByID : MasterDataRepository: ", err.Error())
+		logs.WarningLogger.Println("Error Occured when trying to convert hex string in to Object(ID) in GetRecordByID : dataCollectionRepository: ", err.Error())
 	}
-	rst, err := connections.GetSessionClient("masterdata_records").Find(context.TODO(), bson.M{"_id": objectId})
+	ctx := context.TODO()
+	result := bson.M{}
+	err = connections.GetSessionClient(DataCollection).FindOne(ctx, bson.M{"_id": objectId}).Decode(&result)
 	if err != nil {
-		return data, err
-	}
-	for rst.Next(context.TODO()) {
-		err = rst.Decode(&data)
-		if err != nil {
-			logs.ErrorLogger.Println("Error occured while retreving data from collection document in GetRecordByID:MasterDataRepository.go: ", err.Error())
-			return data, err
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("Data Collection not found")
 		}
+		logs.ErrorLogger.Println("Error retrieving Data Collection:", err.Error())
+		return nil, err
 	}
-	return data, err
+	return result, nil
 }
 
-func (r *MasterDataRepository) GetRecordByMasterID(idName string, id string) ([]model.DataCollection, error) {
-	var collections []model.DataCollection
-	rst, err := repositories.FindById(idName, id, DataCollection)
+func (r *MasterDataRepository) GetRecordByMasterID(idName string, id string) ([]map[string]interface{}, error) {
+	ctx := context.TODO()
+	cursor, err := connections.GetSessionClient(DataCollection).Find(ctx, bson.M{idName: id})
 	if err != nil {
-		return collections, err
+		return nil, err
 	}
-	for rst.Next(context.TODO()) {
-		var collection model.DataCollection
-		err = rst.Decode(&collection)
+
+	var collections []map[string]interface{}
+
+	for cursor.Next(ctx) {
+		var result map[string]interface{}
+		err := cursor.Decode(&result)
 		if err != nil {
-			logs.ErrorLogger.Println(err.Error())
-			return collections, err
+			logs.ErrorLogger.Println("Error retrieving collections:", err.Error())
+			return nil, err
 		}
-		collections = append(collections, collection)
+		collections = append(collections, result)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
 	}
 	return collections, nil
 }
@@ -104,8 +110,8 @@ func (r *MasterDataRepository) GetMasterDataPaginatedResponse(filterConfig bson.
 	return response, nil
 }
 
-func (r *MasterDataRepository) GetDataPaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []model.DataCollection, sort int) (model.DataPaginatedresponse, error) {
-	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]model.DataCollection](
+func (r *MasterDataRepository) GetDataPaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []map[string]interface{}, sort int) (model.DataPaginatedresponse, error) {
+	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]map[string]interface{}](
 		filterConfig,
 		projectionData,
 		pagesize,
@@ -144,8 +150,8 @@ func (r *MasterDataRepository) UpdateMasterData(UpdateObject requestDtos.UpdateM
 	return mDataUpdateResponse, nil
 }
 
-func (r *MasterDataRepository) UpdateDataCollection(UpdateObject requestDtos.UpdateDataCollection, update primitive.M) (model.DataCollection, error) {
-	var mDataUpdateResponse model.DataCollection
+func (r *MasterDataRepository) UpdateDataCollection(UpdateObject requestDtos.UpdateDataCollection, update primitive.M) (map[string]interface{}, error) {
+	var mDataUpdateResponse map[string]interface{}
 	upsert := false
 	after := options.After
 	opt := options.FindOneAndUpdateOptions{
@@ -182,4 +188,24 @@ func (r *MasterDataRepository) DeleteMasterDataRecords(RecordID primitive.Object
 	logs.InfoLogger.Println("DataCollection deleted :", result.DeletedCount)
 	return err
 
+}
+
+func (r *MasterDataRepository) TestGetAllMasterData() ([]model.MasterData, error) {
+	var allMasterData []model.MasterData
+	findOptions := options.Find()
+	result, err := connections.GetSessionClient(MasterData).Find(context.TODO(), bson.D{{}}, findOptions)
+	if err != nil {
+		logs.ErrorLogger.Println("Error occured when trying to connect to DB and excute Find query in GetAllMasterData:masterDataRepository.go: ", err.Error())
+		return allMasterData, err
+	}
+	for result.Next(context.TODO()) {
+		var masterdata model.MasterData
+		err = result.Decode(&masterdata)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection partner in GetAllMasterData:masterDataRepository.go: ", err.Error())
+			return allMasterData, err
+		}
+		allMasterData = append(allMasterData, masterdata)
+	}
+	return allMasterData, nil
 }

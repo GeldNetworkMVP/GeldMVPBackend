@@ -1,8 +1,6 @@
 package businessFacade
 
 import (
-	"fmt"
-
 	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 
@@ -27,7 +25,6 @@ func UpdateWorkflow(UpdateObject requestDtos.UpdateWorkflow) (model.Workflows, e
 }
 
 func DeleteWorkflowByID(WorkflowID primitive.ObjectID) error {
-	fmt.Println("dleted by id", WorkflowID)
 	return workflowRepository.DeleteWorkflow(WorkflowID)
 }
 
