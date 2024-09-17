@@ -70,7 +70,12 @@ func GetStagesByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[model.Stages](w, result)
+		if result.StageID == primitive.NilObjectID {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[model.Stages](w, result)
+		}
 	}
 
 }
@@ -229,4 +234,27 @@ func GetStagesByName(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+}
+
+// Trigger the GetAllStages() method that will return all the Stages
+func TestGetAllStages(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	results, err := businessFacade.TestGetAllStages()
+	if err != nil {
+		ErrorMessage := err.Error()
+		errors.BadRequest(w, ErrorMessage)
+		return
+	} else {
+		if len(results) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			w.WriteHeader(http.StatusOK)
+			err := json.NewEncoder(w).Encode(results)
+			if err != nil {
+				logs.ErrorLogger.Println("Error occured while encoding JSON in GetAllStages(StagesHandler): ", err.Error())
+			}
+			return
+		}
+	}
 }

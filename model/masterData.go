@@ -8,6 +8,7 @@ type MasterData struct {
 	DataName    string `json:"dataname" bson:"dataname"`
 	Description string `json:"description" bson:"description"`
 	//DataCollection []DataCollection   `json:"dataCollection" bson:"dataCollection"`
+	MasterDataFields []string `json:"mfields" bson:"mfields"`
 }
 
 type DataCollection struct {
@@ -28,6 +29,6 @@ type MDataPaginatedresponse struct {
 }
 
 type DataPaginatedresponse struct {
-	Content        []DataCollection `json:"content" bson:"content" validate:"required"`
+	Content        []map[string]interface{} `json:"content" bson:"content" validate:"required"`
 	PaginationInfo PaginationTemplate
 }

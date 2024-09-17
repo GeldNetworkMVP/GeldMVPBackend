@@ -2,8 +2,10 @@ package apiModel
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
@@ -64,20 +66,35 @@ func CreateMasterData(W http.ResponseWriter, r *http.Request) {
 // @Failure		400					{object}	responseDtos.ErrorResponse
 // @Router			/record/save [post]
 func CreateDataCollection(W http.ResponseWriter, r *http.Request) {
-	W.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	var requestCreateMdataCollection model.DataCollection
+	// W.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	// var requestCreateMdataCollection model.DataCollection
+	// decoder := json.NewDecoder(r.Body)
+	// err := decoder.Decode(&requestCreateMdataCollection)
+	// if err != nil {
+	// 	logs.ErrorLogger.Println("Error occured while decoding JSON in CreateMasterDataCollection:masterDataHandler: ", err.Error())
+	// }
+	// err = validations.ValidateMasterDataCollection(requestCreateMdataCollection)
+	// if err != nil {
+	// 	errors.BadRequest(W, err.Error())
+	// } else {
+	// 	result, err1 := businessFacade.CreateMasterDataCollection(requestCreateMdataCollection)
+	// 	if err1 != nil {
+	// 		errors.BadRequest(W, err.Error())
+	// 	} else {
+	// 		commonResponse.SuccessStatus[string](W, result)
+	// 	}
+	// }
+	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&requestCreateMdataCollection)
+	data := map[string]interface{}{}
+	err := decoder.Decode(&data)
 	if err != nil {
-		logs.ErrorLogger.Println("Error occured while decoding JSON in CreateMasterDataCollection:masterDataHandler: ", err.Error())
-	}
-	err = validations.ValidateMasterDataCollection(requestCreateMdataCollection)
-	if err != nil {
-		errors.BadRequest(W, err.Error())
+		fmt.Fprintf(W, "Error decoding request: %v", err)
+		return
 	} else {
-		result, err1 := businessFacade.CreateMasterDataCollection(requestCreateMdataCollection)
+		result, err1 := businessFacade.CreateMasterDataCollection(data)
 		if err1 != nil {
-			errors.BadRequest(W, err.Error())
+			errors.BadRequest(W, "Record with the same name Exists")
 		} else {
 			commonResponse.SuccessStatus[string](W, result)
 		}
@@ -102,7 +119,12 @@ func GetMasterDataByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[model.MasterData](w, result)
+		if result.DataID == primitive.NilObjectID {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[model.MasterData](w, result)
+		}
 	}
 
 }
@@ -119,20 +141,32 @@ func GetMasterDataByID(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	responseDtos.ErrorResponse
 //	@Router			/record/{_id} [get]
 func GetRecordDataByID(w http.ResponseWriter, r *http.Request) {
+	// w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	// vars := mux.Vars(r)
+	// result, err := businessFacade.GetRecordDataByID(vars["_id"])
+	// if err != nil {
+	// 	errors.BadRequest(w, err.Error())
+	// } else {
+	// 	if result.CollectionID == primitive.NilObjectID {
+	// 		commonResponse.NotFound(w, "No record found for the given query.")
+	// 		return
+	// 	} else {
+	// 		commonResponse.SuccessStatus[model.DataCollection](w, result)
+	// 	}
+	// }
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
 	vars := mux.Vars(r)
 	result, err := businessFacade.GetRecordDataByID(vars["_id"])
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		if result.CollectionID == primitive.NilObjectID {
-			commonResponse.NotFound(w, "No record found for the given query.")
+		w.Header().Set("Content-Type", "application/json")
+		err := json.NewEncoder(w).Encode(result)
+		if err != nil {
+			fmt.Fprintf(w, "Error encoding response: %v", err)
 			return
-		} else {
-			commonResponse.SuccessStatus[model.DataCollection](w, result)
 		}
 	}
-
 }
 
 // Trigger the GetRecordDataByMasterDataID() method that will return The specific RecordData with the MasterDataID passed via the API
@@ -157,7 +191,7 @@ func GetRecordDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 			commonResponse.NotFound(w, "No record found for the given query.")
 			return
 		} else {
-			commonResponse.SuccessStatus[[]model.DataCollection](w, result)
+			commonResponse.SuccessStatus[[]map[string]interface{}](w, result)
 		}
 	}
 
@@ -253,9 +287,22 @@ func GetRecordDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 //	@Router			/masterrecord/{dataid} [get]
 func GetPaginatedData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;")
+	// var requestCollection requestDtos.DataRecordPayloadForPagination
+	// decoder := json.NewDecoder(r.Body)
+	// err := decoder.Decode(&requestCollection)
+	// if err != nil {
+	// 	logs.ErrorLogger.Println("Error occured while decoding JSON in GetPaginatedData:masterDataHandler: ", err.Error())
+	// }
 	vars := mux.Vars(r)
 	var pagination requestDtos.DataRecordForMatrixView
 	pagination.DataID = vars["dataid"]
+	fieldsQuery := r.URL.Query().Get("fields")
+	if fieldsQuery != "" {
+		pagination.Fields = strings.Split(fieldsQuery, ",")
+	} else {
+		pagination.Fields = []string{}
+	}
+
 	pgsize, err1 := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err1 != nil || pgsize <= 0 {
 		_pgsize, envErr := strconv.Atoi(commons.GoDotEnvVariable("PAGINATION_DEFUALT_LIMIT"))
@@ -362,7 +409,7 @@ func UpdateDataCollection(w http.ResponseWriter, r *http.Request) {
 			errors.BadRequest(w, err.Error())
 			return
 		}
-		commonResponse.SuccessStatus[model.DataCollection](w, result)
+		commonResponse.SuccessStatus[map[string]interface{}](w, result)
 	}
 }
 
@@ -448,8 +495,31 @@ func GetPlotDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 			commonResponse.NotFound(w, "No record found for the given query.")
 			return
 		} else {
-			commonResponse.SuccessStatus[[]model.DataCollection](w, result)
+			commonResponse.SuccessStatus[[]map[string]interface{}](w, result)
 		}
 	}
 
+}
+
+// Trigger the GetAllMasterData() method that will return all the MasterData
+func TestGetAllMasterData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	results, err := businessFacade.TestGetAllMasterData()
+	if err != nil {
+		ErrorMessage := err.Error()
+		errors.BadRequest(w, ErrorMessage)
+		return
+	} else {
+		if len(results) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			w.WriteHeader(http.StatusOK)
+			err := json.NewEncoder(w).Encode(results)
+			if err != nil {
+				logs.ErrorLogger.Println("Error occured while encoding JSON in GetAllMasterData(MasterDataHandler): ", err.Error())
+			}
+			return
+		}
+	}
 }

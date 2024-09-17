@@ -48,4 +48,11 @@ var StageRoutes = model.Routers{
 		Path:    "/stagename/{stagename}",
 		Handler: apiModel.GetStagesByName,
 	},
+	//Will return all the Stages
+	model.Router{
+		Name:    "Test normal Get All Stages",
+		Method:  "GET",
+		Path:    "/stages",
+		Handler: apiModel.TestGetAllStages,
+	},
 }

@@ -90,4 +90,11 @@ var MDataRoutes = model.Routers{
 		Path:    "/plotrecord",
 		Handler: apiModel.GetPlotDataByMasterDataID,
 	},
+	//Will return all the Master Data Containers
+	model.Router{
+		Name:    "Test normal Get All Master Data",
+		Method:  "GET",
+		Path:    "/masterdata",
+		Handler: apiModel.TestGetAllMasterData,
+	},
 }

@@ -2,7 +2,6 @@ package userAndPermissions
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/connections"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories"
@@ -63,7 +62,6 @@ func (r *UserRepository) UpdateUsers(UpdateObject requestDtos.UpdateUser, update
 }
 
 func (r *UserRepository) DeleteUser(userID primitive.ObjectID) error {
-	fmt.Println("id", userID)
 	result, err := connections.GetSessionClient(User).DeleteOne(context.TODO(), bson.M{"_id": userID})
 	if err != nil {
 		logs.ErrorLogger.Println("Error occured when Connecting to DB and executing DeleteOne Query in DeleteUser(userRepository): ", err.Error())
