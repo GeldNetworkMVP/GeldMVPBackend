@@ -8,8 +8,8 @@ type AppUser struct {
 	Email       string `json:"email" bson:"email"`
 	Contact     string `json:"contact" bson:"contact"`
 	Designation string `json:"designation" bson:"designation"`
-	EncPW       []byte `json:"encpw" bson:"encpw"`
-	Status      string `json:"status" bson:"status"`
+	// EncPW       []byte `json:"encpw" bson:"encpw"`
+	Status string `json:"status" bson:"status"`
 }
 
 type UserPayload struct {
@@ -18,8 +18,8 @@ type UserPayload struct {
 	Email       string `json:"email" bson:"email"`
 	Contact     string `json:"contact" bson:"contact"`
 	Designation string `json:"designation" bson:"designation"`
-	Password    string `json:"encpw" bson:"encpw"`
-	Status      string `json:"status" bson:"status"`
+	// Password    string `json:"encpw" bson:"encpw"`
+	Status string `json:"status" bson:"status"`
 }
 
 type UserPaginatedResponse struct {

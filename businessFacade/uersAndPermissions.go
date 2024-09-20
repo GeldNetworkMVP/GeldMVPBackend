@@ -19,7 +19,8 @@ func GetUserByID(userID string) (model.AppUser, error) {
 
 func UpdateUsers(UpdateObject requestDtos.UpdateUser) (model.AppUser, error) {
 	update := bson.M{
-		"$set": bson.M{"email": UpdateObject.Email, "contact": UpdateObject.Contact, "designation": UpdateObject.Designation, "encpw": UpdateObject.EncPW, "status": UpdateObject.Status},
+		"$set": bson.M{"email": UpdateObject.Email, "contact": UpdateObject.Contact, "designation": UpdateObject.Designation, "status": UpdateObject.Status},
+		//, "encpw": UpdateObject.EncPW},
 	}
 	return userRepository.UpdateUsers(UpdateObject, update)
 }
@@ -51,4 +52,12 @@ func GetProjectionDataMatrixViewForUserData() bson.D {
 		{Key: "status", Value: 1},
 	}
 	return projection
+}
+
+func TestGetAllUsers() ([]model.AppUser, error) {
+	return userRepository.TestGetAllUsers()
+}
+
+func GetUsersByStatus(status string) ([]model.AppUser, error) {
+	return userRepository.GetUsersByStatus("status", status)
 }
