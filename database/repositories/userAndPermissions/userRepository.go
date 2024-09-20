@@ -90,3 +90,47 @@ func (r *UserRepository) GetUserssDataPaginatedResponse(filterConfig bson.M, pro
 	response.PaginationInfo = paginationResponse
 	return response, nil
 }
+
+func (r *UserRepository) TestGetAllUsers() ([]model.AppUser, error) {
+	var allUsers []model.AppUser
+	findOptions := options.Find()
+	result, err := connections.GetSessionClient(User).Find(context.TODO(), bson.D{{}}, findOptions)
+	if err != nil {
+		logs.ErrorLogger.Println("Error occured when trying to connect to DB and excute Find query in GetAllUsers:UsersRepository.go: ", err.Error())
+		return allUsers, err
+	}
+	for result.Next(context.TODO()) {
+		var user model.AppUser
+		err = result.Decode(&user)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection partner in GetAllUserss:UsersRepository.go: ", err.Error())
+			return allUsers, err
+		}
+		allUsers = append(allUsers, user)
+	}
+	return allUsers, nil
+}
+
+func (r *UserRepository) GetUsersByStatus(idName string, id string) ([]model.AppUser, error) {
+	ctx := context.TODO()
+	cursor, err := connections.GetSessionClient(User).Find(ctx, bson.M{idName: id})
+	if err != nil {
+		return nil, err
+	}
+
+	var users []model.AppUser
+
+	for cursor.Next(ctx) {
+		var result model.AppUser
+		err := cursor.Decode(&result)
+		if err != nil {
+			logs.ErrorLogger.Println("Error retrieving users:", err.Error())
+			return nil, err
+		}
+		users = append(users, result)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return users, nil
+}

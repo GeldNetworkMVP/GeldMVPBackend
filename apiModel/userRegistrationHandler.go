@@ -7,7 +7,6 @@ import (
 	// "strconv"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
-	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/commonResponse"
@@ -43,15 +42,15 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		encres := commons.Encrypt(requestCreateUser.Password)
+		// encres := commons.Encrypt(requestCreateUser.Password)
 		obj := model.AppUser{
 			AppUserID: requestCreateUser.AppUserID,
 			// AdminUserID: requestCreateUser.AdminUserID,
 			Email:       requestCreateUser.Email,
 			Contact:     requestCreateUser.Contact,
 			Designation: requestCreateUser.Designation,
-			EncPW:       encres,
-			Status:      requestCreateUser.Status,
+			// EncPW:       encres,
+			Status: requestCreateUser.Status,
 		}
 		result, err1 := businessFacade.CreateUsers(obj)
 		if err1 != nil {
@@ -80,7 +79,12 @@ func GetUsersByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
-		commonResponse.SuccessStatus[model.AppUser](w, result)
+		if result.AppUserID == primitive.NilObjectID {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[model.AppUser](w, result)
+		}
 	}
 
 }
@@ -222,3 +226,43 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 // 	commonResponse.SuccessStatus[model.UserPaginatedResponse](w, results)
 
 // }
+
+// Trigger the GetAllUsers() method that will return all the Users
+func TestGetAllUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	results, err := businessFacade.TestGetAllUsers()
+	if err != nil {
+		ErrorMessage := err.Error()
+		errors.BadRequest(w, ErrorMessage)
+		return
+	} else {
+		if len(results) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			w.WriteHeader(http.StatusOK)
+			err := json.NewEncoder(w).Encode(results)
+			if err != nil {
+				logs.ErrorLogger.Println("Error occured while encoding JSON in GetAllUsers(UsersHandler): ", err.Error())
+			}
+			return
+		}
+	}
+}
+
+func GetUsersByStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	vars := mux.Vars(r)
+	result, err := businessFacade.GetUsersByStatus(vars["status"])
+	if err != nil {
+		errors.BadRequest(w, err.Error())
+	} else {
+		if len(result) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[[]model.AppUser](w, result)
+		}
+	}
+
+}

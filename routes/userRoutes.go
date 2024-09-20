@@ -41,4 +41,19 @@ var AppUserRoutes = model.Routers{
 	// 	Path:    "/appuser/admin/{userid}",
 	// 	Handler: apiModel.GetPaginatedUserData,
 	// },
+
+	//Will return all the users
+	model.Router{
+		Name:    "Test normal Get All users",
+		Method:  "GET",
+		Path:    "/users",
+		Handler: apiModel.TestGetAllUsers,
+	},
+	//Will return Users based on status provided
+	model.Router{
+		Name:    "Get User by Status",
+		Method:  "GET",
+		Path:    "/appuser/status/{status}",
+		Handler: apiModel.GetUsersByStatus,
+	},
 }
