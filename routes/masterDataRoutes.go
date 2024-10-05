@@ -85,7 +85,7 @@ var MDataRoutes = model.Routers{
 	},
 	//Get all Plots for Plot ID
 	model.Router{
-		Name:    "Get plot data record",
+		Name:    "Get plot data record by container ID",
 		Method:  "Get",
 		Path:    "/plotrecord",
 		Handler: apiModel.GetPlotDataByMasterDataID,

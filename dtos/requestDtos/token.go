@@ -3,8 +3,9 @@ package requestDtos
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type UpdateToken struct {
-	TokenID primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	Status  string             `json:"status" bson:"status"`
+	TokenID   primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Status    string             `json:"bcstatus" bson:"bcstatus"`
+	TokenHash string             `json:"tokenhash" bson:"tokenhash"`
 }
 
 type TokenForMatrixView struct {

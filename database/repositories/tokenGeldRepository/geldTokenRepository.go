@@ -66,6 +66,26 @@ func (r *TokenRepository) UpdateTokens(UpdateObject requestDtos.UpdateToken, upd
 	return TokenUpdateResponse, nil
 }
 
+func (r *TokenRepository) UpdateTransactions(UpdateObject requestDtos.UpdateToken, updateTransactions primitive.M) (model.TokenTransactions, error) {
+	var TransactionUpdateResponse model.TokenTransactions
+	upsert := false
+	after := options.After
+	opt := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+
+	rstTxn := connections.GetSessionClient(Transactions).FindOneAndUpdate(context.TODO(), bson.M{"tokenid": UpdateObject.TokenID.Hex()}, updateTransactions, &opt)
+	if rstTxn != nil {
+		err := rstTxn.Decode((&TransactionUpdateResponse))
+		if err != nil {
+			logs.ErrorLogger.Println("Error Occured while Update Token", err.Error())
+			return TransactionUpdateResponse, err
+		}
+		return TransactionUpdateResponse, err
+	}
+	return TransactionUpdateResponse, nil
+}
 func (r *TokenRepository) GetTokensPaginatedResponseByStatus(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []model.Tokens, sort int) (model.TokenPaginatedresponse, error) {
 	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]model.Tokens](
 		filterConfig,
@@ -84,4 +104,28 @@ func (r *TokenRepository) GetTokensPaginatedResponseByStatus(filterConfig bson.M
 	response.Content = contentResponse
 	response.PaginationInfo = paginationResponse
 	return response, nil
+}
+
+func (r *TokenRepository) GetAllTransactionsByPlotID(idName string, id string) ([]model.TokenTransactions, error) {
+	ctx := context.TODO()
+	cursor, err := connections.GetSessionClient(Transactions).Find(ctx, bson.M{idName: id})
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []model.TokenTransactions
+
+	for cursor.Next(ctx) {
+		var result model.TokenTransactions
+		err := cursor.Decode(&result)
+		if err != nil {
+			logs.ErrorLogger.Println("Error retrieving transactions:", err.Error())
+			return nil, err
+		}
+		transactions = append(transactions, result)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return transactions, nil
 }
