@@ -15,7 +15,7 @@ var (
 	fileBaseBucket = os.Getenv("FILEBASE_BUCKET")
 )
 
-func UploadFilesToIpfs(fileObj model.TokenPayload) (string, error) {
+func UploadFilesToIpfs(fileObj model.TokenPayload, svg string) (string, error) { //must check if svg should be file
 	var folderPath string
 
 	folderPath = "geldtokens/" + fileObj.PlotID + fileObj.TokenName
@@ -25,7 +25,7 @@ func UploadFilesToIpfs(fileObj model.TokenPayload) (string, error) {
 		return "", errWhenCreatingFolder
 	}
 
-	cid, errWhenUploadingFileToIpfs := InitiateUpload(fileObj.FileType, fileObj.TokenPayload, fileObj.TokenName, folderPath)
+	cid, errWhenUploadingFileToIpfs := InitiateUpload(fileObj.FileType, svg, fileObj.TokenName, folderPath)
 	if errWhenUploadingFileToIpfs != nil {
 		return "", errWhenUploadingFileToIpfs
 	}

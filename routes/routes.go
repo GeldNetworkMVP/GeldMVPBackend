@@ -13,6 +13,7 @@ func init() {
 		DataTemplateRoutes,
 		AppUserRoutes,
 		TokenRoutes,
+		BlockchainRoutes,
 	}
 
 	for _, r := range routes {

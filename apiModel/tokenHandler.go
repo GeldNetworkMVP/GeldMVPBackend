@@ -41,37 +41,48 @@ func SaveToken(W http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		cid, err := businessFacade.UploadFilesToIpfs(requestCreateToken)
+		templates, err := businessFacade.GetTemplatesByPlotID(requestCreateToken.PlotID)
 		if err != nil {
 			errors.BadRequest(W, err.Error())
 		} else {
-			object := model.Tokens{
-				TokenID:     requestCreateToken.TokenID,
-				PlotID:      requestCreateToken.PlotID,
-				TokenName:   requestCreateToken.TokenName,
-				Description: requestCreateToken.Description,
-				CID:         cid,
-				Price:       requestCreateToken.Price,
-				IPFSStatus:  "Sent to IPFS",
-				BCStatus:    requestCreateToken.BCStatus,
-				TokenHash:   requestCreateToken.TokenHash,
-			}
-			result, err1 := businessFacade.SaveTokens(object)
-			if err1 != nil {
+			svg, tokenhash, err := businessFacade.GenerateToken(templates)
+			if err != nil {
 				errors.BadRequest(W, err.Error())
 			} else {
-				newobj := model.TokenTransactions{
-					TransactionStatus: "Minted",
-					TXNHash:           requestCreateToken.BCHash,
-					PlotID:            requestCreateToken.PlotID,
-					TokenID:           requestCreateToken.TokenID.String(),
-					DBStatus:          result,
-				}
-				result1, err2 := businessFacade.SaveTransaction(newobj)
-				if err2 != nil {
+				cid, err := businessFacade.UploadFilesToIpfs(requestCreateToken, svg)
+				if err != nil {
 					errors.BadRequest(W, err.Error())
 				} else {
-					commonResponse.SuccessStatus[string](W, result1)
+					object := model.Tokens{
+						TokenID:     requestCreateToken.TokenID,
+						PlotID:      requestCreateToken.PlotID,
+						TokenName:   requestCreateToken.TokenName,
+						Description: requestCreateToken.Description,
+						CID:         cid,
+						Price:       requestCreateToken.Price,
+						IPFSStatus:  "Sent to IPFS",
+						BCStatus:    requestCreateToken.BCStatus,
+						TokenHash:   tokenhash,
+					}
+					result, err1 := businessFacade.SaveTokens(object)
+					if err1 != nil {
+						errors.BadRequest(W, err.Error())
+					} else {
+						//TODO: check BC Status as well and do a comparison later on
+						newobj := model.TokenTransactions{
+							TransactionStatus: "OnSale",
+							TXNHash:           requestCreateToken.BCHash,
+							PlotID:            requestCreateToken.PlotID,
+							TokenID:           result,
+							DBStatus:          "Saved",
+						}
+						result1, err2 := businessFacade.SaveTransaction(newobj)
+						if err2 != nil {
+							errors.BadRequest(W, err.Error())
+						} else {
+							commonResponse.SuccessStatus[string](W, result1)
+						}
+					}
 				}
 			}
 		}
@@ -127,8 +138,17 @@ func UpdateTokenStatus(w http.ResponseWriter, r *http.Request) {
 			logs.WarningLogger.Println("Failed to update token : ", err.Error())
 			errors.BadRequest(w, err.Error())
 			return
+		} else {
+			resultTxn, err := businessFacade.UpdateTransactions(UpdateObject)
+			logs.InfoLogger.Println("Transaction Data has been updated ", resultTxn)
+			if err != nil {
+				logs.WarningLogger.Println("Failed to update token : ", err.Error())
+				errors.BadRequest(w, err.Error())
+				return
+			}
+			commonResponse.SuccessStatus[model.Tokens](w, result)
 		}
-		commonResponse.SuccessStatus[model.Tokens](w, result)
+
 	}
 }
 
@@ -197,5 +217,39 @@ func PaginatedGetAllTokensByStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	commonResponse.SuccessStatus[model.TokenPaginatedresponse](w, results)
+
+}
+
+func GetAllTransactionsByPlotID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	vars := mux.Vars(r)
+	result, err := businessFacade.GetAllTransactionsByPlotID(vars["plotid"])
+	if err != nil {
+		errors.BadRequest(w, err.Error())
+	} else {
+		if len(result) == 0 {
+			commonResponse.NotFound(w, "No record found for the given query.")
+			return
+		} else {
+			commonResponse.SuccessStatus[[]model.TokenTransactions](w, result)
+		}
+	}
+
+}
+
+func GetProofBasedOnTemplateTxnHashAndTemplateID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	vars := mux.Vars(r)
+	result, err := businessFacade.GetProofBasedOnTemplateTxnHashAndTemplateID(vars["_id"], vars["currentHash"])
+	if err != nil {
+		errors.BadRequest(w, err.Error())
+	} else {
+		// if len(result) == 0 {
+		// 	commonResponse.NotFound(w, "No record found for the given query.")
+		// 	return
+		// } else {
+		commonResponse.SuccessStatus[string](w, result)
+		//}
+	}
 
 }

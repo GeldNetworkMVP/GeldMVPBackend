@@ -34,4 +34,18 @@ var TokenRoutes = model.Routers{
 		Path:    "/tokens/updatestatus",
 		Handler: apiModel.UpdateTokenStatus,
 	},
+	//Route will be used to get all transactions by plot id
+	model.Router{
+		Name:    "Get all transactions by PlotID",
+		Method:  "GET",
+		Path:    "/transactions/plot/{plotid}",
+		Handler: apiModel.GetAllTransactionsByPlotID,
+	},
+	//Get Proof based on TransactionHash
+	model.Router{
+		Name:    "Get proof by txnhash",
+		Method:  "GET",
+		Path:    "/tokens/proof/{currentHash}/{_id}", //in the svg the templateID should be included with the txn hash as well
+		Handler: apiModel.GetProofBasedOnTemplateTxnHashAndTemplateID,
+	},
 }

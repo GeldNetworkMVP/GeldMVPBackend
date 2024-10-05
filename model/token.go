@@ -15,16 +15,14 @@ type Tokens struct {
 }
 
 type TokenPayload struct {
-	TokenID      primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	PlotID       string             `json:"plotid" bson:"plotid"`
-	TokenName    string             `json:"tokenname" bson:"tokenname"`
-	Description  string             `json:"description" bson:"description"`
-	TokenPayload string             `json:"tokenpayload" bson:"tokenpayload"`
-	Price        string             `json:"price" bson:"price"`
-	FileType     string             `json:"filetype" bson:"filetype"`
-	BCStatus     string             `json:"bcstatus" bson:"bcstatus"`
-	BCHash       string             `json:"bchash" bson:"bchash"`
-	TokenHash    string             `json:"tokenhash" bson:"tokenhash"`
+	TokenID     primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	PlotID      string             `json:"plotid" bson:"plotid"`
+	TokenName   string             `json:"tokenname" bson:"tokenname"`
+	Description string             `json:"description" bson:"description"`
+	Price       string             `json:"price" bson:"price"`
+	FileType    string             `json:"filetype" bson:"filetype"`
+	BCStatus    string             `json:"bcstatus" bson:"bcstatus"`
+	BCHash      string             `json:"bchash" bson:"bchash"`
 }
 
 type TokenPaginatedresponse struct {
