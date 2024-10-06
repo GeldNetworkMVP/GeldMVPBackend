@@ -25,7 +25,7 @@ func (r *MasterDataRepository) CreateMasterData(mdata model.MasterData) (string,
 }
 
 func (r *MasterDataRepository) CreateDataCollection(data map[string]interface{}) (string, error) {
-	return repositories.SaveDynamicData(data, DataCollection, "name")
+	return repositories.SaveDynamicData(data, DataCollection, "templatename")
 }
 
 func (r *MasterDataRepository) GetMasterDataByID(mDataID string) (model.MasterData, error) {
