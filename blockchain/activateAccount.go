@@ -23,6 +23,7 @@ func ActivateAccount(publickey string) (string, error) {
 	sourceAccount, err := client.AccountDetail(accountRequest)
 	if err != nil {
 		log.Fatal(err)
+		return "", err
 	}
 	mainKeypair, _ := keypair.ParseFull(mainSK)
 	CreateAccount := []txnbuild.Operation{
@@ -42,6 +43,7 @@ func ActivateAccount(publickey string) (string, error) {
 	})
 	if err != nil {
 		log.Println("Error when build transaction : ", err)
+		return "", err
 	}
 
 	signedTx, err := tx.Sign(commons.GetStellarNetwork(), mainKeypair)
@@ -53,6 +55,7 @@ func ActivateAccount(publickey string) (string, error) {
 	respn, err := commons.GetHorizonClient().SubmitTransaction(signedTx)
 	if err != nil {
 		log.Println("Error submitting transaction:", err)
+		return "", err
 	}
 
 	log.Println("Transaction Hash for new Account creation: ", respn.Hash)
