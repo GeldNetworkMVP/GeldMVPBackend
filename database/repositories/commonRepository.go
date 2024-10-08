@@ -56,12 +56,12 @@ func SaveDynamicData(model map[string]interface{}, collection string, check stri
 	}
 	defer session.EndSession(context.Background())
 
-	templateName, ok := model[check].(string)
+	data, ok := model[check].(string)
 	if !ok {
-		return "", fmt.Errorf("templatename field is missing or not a string")
+		return "", fmt.Errorf("name field is missing or not a string")
 	}
 
-	filter := bson.M{"templatename": templateName}
+	filter := bson.M{check: data}
 	var existingDoc bson.M
 	collectionRef := session.Client().Database(DbName).Collection(collection)
 	err = collectionRef.FindOne(context.TODO(), filter).Decode(&existingDoc)
@@ -71,7 +71,7 @@ func SaveDynamicData(model map[string]interface{}, collection string, check stri
 	}
 
 	if existingDoc != nil {
-		return "", fmt.Errorf("a template with the name '%s' already exists", templateName)
+		return "", fmt.Errorf("a template with the name '%s' already exists", data)
 	}
 
 	rst, err := collectionRef.InsertOne(context.TODO(), model)
