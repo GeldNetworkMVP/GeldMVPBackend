@@ -21,6 +21,7 @@ func ActivateNewAccount(w http.ResponseWriter, r *http.Request) {
 		result, err := businessFacade.ActivateNewAccount(vars["publickey"])
 		if err != nil {
 			errors.BadRequest(w, err.Error())
+			return
 		} else {
 			w.Header().Set("Content-Type", "application/json")
 			err := json.NewEncoder(w).Encode(result)
@@ -30,8 +31,12 @@ func ActivateNewAccount(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	} else {
-		fmt.Println("Account is active")
-		return
+		w.Header().Set("Content-Type", "application/json")
+		err := json.NewEncoder(w).Encode("Account is active")
+		if err != nil {
+			fmt.Fprintf(w, "Error encoding response: %v", err)
+			return
+		}
 	}
 }
 
@@ -42,19 +47,24 @@ func CheckBalance(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	}
-	fmt.Println("-----------1-----------", result)
 	if result == "No Balance" {
 		response, err := businessFacade.FundAccount(vars["publickey"])
-		fmt.Println("----------2-------", response)
 		if err != nil {
 			errors.BadRequest(w, err.Error())
 		} else {
 			w.Header().Set("Content-Type", "application/json")
-			err := json.NewEncoder(w).Encode(result)
+			err := json.NewEncoder(w).Encode(response)
 			if err != nil {
 				fmt.Fprintf(w, "Error encoding response: %v", err)
 				return
 			}
+		}
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		err := json.NewEncoder(w).Encode(result)
+		if err != nil {
+			fmt.Fprintf(w, "Error encoding response: %v", err)
+			return
 		}
 	}
 

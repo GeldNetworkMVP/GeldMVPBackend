@@ -84,7 +84,6 @@ func GetProofBasedOnTemplateTxnHashAndTemplateID(id string, txnhash string) (str
 	var bchash string
 	var dbhash string
 	var status string
-	fmt.Println("hash ", txnhash)
 	url := "https://horizon-testnet.stellar.org/transactions/" + txnhash + "/operations"
 	method := "GET"
 
@@ -161,7 +160,6 @@ func GetProofBasedOnTemplateTxnHashAndTemplateID(id string, txnhash string) (str
 	}
 
 	dbhash = templateRes["templateHash"].(string)
-	fmt.Println("templateHash here is ", dbhash)
 	if dbhash == bchash {
 		status = "verified"
 	} else {

@@ -3,7 +3,6 @@ package dataConfigRepository
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/connections"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/database/repositories"
@@ -44,7 +43,6 @@ func (r *DataTemplateRepository) GetTemplateByID(templateID string) (map[string]
 func (r *DataTemplateRepository) GetTemplatesByPlotID(plotID string) ([]map[string]interface{}, error) {
 	ctx := context.TODO()
 
-	fmt.Println("plot id", plotID)
 	// objectID, err := primitive.ObjectIDFromHex(plotID)
 	// if err != nil {
 	// 	logs.ErrorLogger.Println("Invalid plotID:", err.Error())
@@ -75,7 +73,6 @@ func (r *DataTemplateRepository) GetTemplatesByPlotID(plotID string) ([]map[stri
 	if err := cursor.Err(); err != nil {
 		return nil, err
 	}
-	fmt.Println("retrieved ", templates)
 	return templates, nil
 }
 
