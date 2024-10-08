@@ -487,7 +487,7 @@ func DeleteMasterDataRecordByID(w http.ResponseWriter, r *http.Request) {
 
 func GetPlotDataByMasterDataID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	result, err := businessFacade.GetRecordDataByMasterDataID("66d71f5af2999f18ef9f9d30")
+	result, err := businessFacade.GetRecordDataByMasterDataID("67059492870f20b10dbee7f7")
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	} else {
