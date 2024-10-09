@@ -32,6 +32,7 @@ type TokenPaginatedresponse struct {
 
 type TokenTransactions struct {
 	TransactionID     primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	TokenName         string             `json:"tokenname" bson:"tokenname"`
 	TransactionStatus string             `json:"status" bson:"status"`
 	TXNHash           string             `json:"txnhash" bson:"txnhash"`
 	PlotID            string             `json:"plotid" bson:"plotid"`

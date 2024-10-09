@@ -340,12 +340,13 @@ func GetPaginatedData(w http.ResponseWriter, r *http.Request) {
 	pagination.SortType = sort
 	results, err := businessFacade.GetDataPagination(pagination)
 	if err != nil {
-		errors.BadRequest(w, err.Error())
-		return
+		commonResponse.NotFound(w, "Bad request, something went wrong when retreiving the records")
+		// errors.BadRequest(w, err.Error())
+		// //return
 	}
 	if results.Content == nil {
-		commonResponse.NoContent(w, "")
-		return
+		commonResponse.NotFound(w, "No records found")
+		//return
 	}
 	commonResponse.SuccessStatus[model.DataPaginatedresponse](w, results)
 
