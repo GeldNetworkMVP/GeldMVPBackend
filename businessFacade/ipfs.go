@@ -43,6 +43,10 @@ func InitiateUpload(fileType string, fileContent string, fileName string, folder
 		dec = []byte(fileContent)
 		fileNameInLocation = fileName + ".txt"
 		fileNameInLocation = strings.ToLower(fileNameInLocation)
+	} else if fileType == "html" {
+		dec = []byte(fileContent)
+		fileNameInLocation = fileName + ".html"
+		fileNameInLocation = strings.ToLower(fileNameInLocation)
 	} else {
 		return "", errors.New("Invalid file type")
 	}

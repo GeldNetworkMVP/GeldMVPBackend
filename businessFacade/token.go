@@ -76,7 +76,7 @@ func GetAllTransactionsByPlotID(plotid string) ([]model.TokenTransactions, error
 }
 
 func GenerateToken(templates []map[string]interface{}) (string, string, error) {
-	return "", "", nil
+	return "<html><body><h1>Add some code here</h1></body></html>", "", nil
 }
 
 func GetProofBasedOnTemplateTxnHashAndTemplateID(id string, txnhash string) (string, error) {
