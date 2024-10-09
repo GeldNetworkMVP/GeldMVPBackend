@@ -76,7 +76,14 @@ func GetAllTransactionsByPlotID(plotid string) ([]model.TokenTransactions, error
 }
 
 func GenerateToken(templates []map[string]interface{}) (string, string, error) {
-	return "", "", nil
+	templatesJSON, err := json.MarshalIndent(templates, "", "  ")
+	if err != nil {
+		return "", "", fmt.Errorf("error converting templates to JSON: %v", err)
+	}
+
+	jsonString := string(templatesJSON)
+	htmlContent := fmt.Sprintf("<html><body><h1>Add some code here</h1><pre>%s</pre></body></html>", jsonString)
+	return htmlContent, "", nil
 }
 
 func GetProofBasedOnTemplateTxnHashAndTemplateID(id string, txnhash string) (string, error) {
