@@ -2,6 +2,7 @@ package apiModel
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -228,8 +229,12 @@ func GetAllTransactionsByPlotID(w http.ResponseWriter, r *http.Request) {
 		errors.BadRequest(w, err.Error())
 	} else {
 		if len(result) == 0 {
-			commonResponse.NotFound(w, "No record found for the given query.")
-			return
+			w.Header().Set("Content-Type", "application/json")
+			err := json.NewEncoder(w).Encode(result)
+			if err != nil {
+				fmt.Fprintf(w, "Error encoding response: %v", err)
+				return
+			}
 		} else {
 			commonResponse.SuccessStatus[[]model.TokenTransactions](w, result)
 		}
