@@ -72,6 +72,7 @@ func SaveToken(W http.ResponseWriter, r *http.Request) {
 						//TODO: check BC Status as well and do a comparison later on
 						newobj := model.TokenTransactions{
 							TransactionStatus: "OnSale",
+							TokenName:         requestCreateToken.TokenName,
 							TXNHash:           requestCreateToken.BCHash,
 							PlotID:            requestCreateToken.PlotID,
 							TokenID:           result,
