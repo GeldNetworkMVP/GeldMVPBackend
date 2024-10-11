@@ -8,7 +8,8 @@ type MasterData struct {
 	DataName    string `json:"dataname" bson:"dataname"`
 	Description string `json:"description" bson:"description"`
 	//DataCollection []DataCollection   `json:"dataCollection" bson:"dataCollection"`
-	MasterDataFields []string `json:"mfields" bson:"mfields"`
+	MasterDataFields   []string `json:"mfields" bson:"mfields"`
+	RecordsInContainer string   `json:"noOfRecords" bson:"noOfRecords"`
 }
 
 type DataCollection struct {

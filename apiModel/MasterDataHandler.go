@@ -515,6 +515,19 @@ func TestGetAllMasterData(w http.ResponseWriter, r *http.Request) {
 			commonResponse.NotFound(w, "No record found for the given query.")
 			return
 		} else {
+			for i := range results {
+				id := results[i].DataID.Hex()
+				fmt.Println("ID: ", id)
+
+				masterDataRecords, err := businessFacade.GetRecordDataByMasterDataID(id)
+				if err != nil {
+					logs.ErrorLogger.Println("Error occurred while fetching master data: ", err.Error())
+					continue
+				}
+
+				results[i].RecordsInContainer = strconv.Itoa(len(masterDataRecords))
+			}
+
 			w.WriteHeader(http.StatusOK)
 			err := json.NewEncoder(w).Encode(results)
 			if err != nil {
