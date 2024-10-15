@@ -13,16 +13,24 @@ func CreateUsers(users model.AppUser) (string, error) {
 	return userRepository.CreateUsers(users)
 }
 
-func GetUserByID(userID string) (model.AppUser, error) {
+func GetUserByID(userID string) (model.AppUserDetails, error) {
 	return userRepository.GetUserByID(userID)
 }
 
-func UpdateUsers(UpdateObject requestDtos.UpdateUser) (model.AppUser, error) {
+func UpdateUsers(UpdateObject requestDtos.UpdateUser) (model.AppUserDetails, error) {
 	update := bson.M{
 		"$set": bson.M{"email": UpdateObject.Email, "contact": UpdateObject.Contact, "designation": UpdateObject.Designation, "status": UpdateObject.Status},
 		//, "encpw": UpdateObject.EncPW},
 	}
 	return userRepository.UpdateUsers(UpdateObject, update)
+}
+
+func UpdateUsersStatus(UpdateObject requestDtos.UpdateUserStatus) (model.AppUserDetails, error) {
+	update := bson.M{
+		"$set": bson.M{"status": UpdateObject.Status},
+		//, "encpw": UpdateObject.EncPW},
+	}
+	return userRepository.UpdateUsersStatus(UpdateObject, update)
 }
 
 func DeleteUserByID(userID primitive.ObjectID) error {
@@ -54,10 +62,14 @@ func GetProjectionDataMatrixViewForUserData() bson.D {
 	return projection
 }
 
-func TestGetAllUsers() ([]model.AppUser, error) {
+func TestGetAllUsers() ([]model.AppUserDetails, error) {
 	return userRepository.TestGetAllUsers()
 }
 
-func GetUsersByStatus(status string) ([]model.AppUser, error) {
+func GetUsersByStatus(status string) ([]model.AppUserDetails, error) {
 	return userRepository.GetUsersByStatus("status", status)
+}
+
+func GetUserEncPW(username string) (model.AppUser, error) {
+	return userRepository.GetUserEncPW(username)
 }

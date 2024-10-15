@@ -15,24 +15,27 @@ var AppUserRoutes = model.Routers{
 	},
 	//Will return Users based on Users ID provided
 	model.Router{
-		Name:    "Get User by ID",
-		Method:  "GET",
-		Path:    "/appuser/{_id}",
-		Handler: apiModel.GetUsersByID,
+		Name:      "Get User by ID",
+		Method:    "GET",
+		Path:      "/appuser/{_id}",
+		Handler:   apiModel.GetUsersByID,
+		Protected: true,
 	},
 	//Will update Users based on Users ID provided
 	model.Router{
-		Name:    "Update Users",
-		Method:  "PUT",
-		Path:    "/updateuser",
-		Handler: apiModel.UpdateUser,
+		Name:      "Update Users",
+		Method:    "PUT",
+		Path:      "/updateuser",
+		Handler:   apiModel.UpdateUser,
+		Protected: true,
 	},
 	//Will delete User based on User ID provided
 	model.Router{
-		Name:    "Delete User by ID",
-		Method:  "DELETE",
-		Path:    "/appuser/remove/{_id}",
-		Handler: apiModel.DeleteUserByID,
+		Name:      "Delete User by ID",
+		Method:    "DELETE",
+		Path:      "/appuser/remove/{_id}",
+		Handler:   apiModel.DeleteUserByID,
+		Protected: true,
 	},
 	//Will return users based adminuserid paginated response
 	// model.Router{
@@ -44,16 +47,33 @@ var AppUserRoutes = model.Routers{
 
 	//Will return all the users
 	model.Router{
-		Name:    "Test normal Get All users",
-		Method:  "GET",
-		Path:    "/users",
-		Handler: apiModel.TestGetAllUsers,
+		Name:      "Test normal Get All users",
+		Method:    "GET",
+		Path:      "/users",
+		Handler:   apiModel.TestGetAllUsers,
+		Protected: true,
 	},
 	//Will return Users based on status provided
 	model.Router{
-		Name:    "Get User by Status",
+		Name:      "Get User by Status",
+		Method:    "GET",
+		Path:      "/appuser/status/{status}",
+		Handler:   apiModel.GetUsersByStatus,
+		Protected: true,
+	},
+	//Will update Users status based on Users ID provided
+	model.Router{
+		Name:      "Update Users Status",
+		Method:    "PUT",
+		Path:      "/updateuserstatus",
+		Handler:   apiModel.UpdateUserStatus,
+		Protected: true,
+	},
+	//Login
+	model.Router{
+		Name:    "User Sign In",
 		Method:  "GET",
-		Path:    "/appuser/status/{status}",
-		Handler: apiModel.GetUsersByStatus,
+		Path:    "/usersignin/{username}/{encpw}",
+		Handler: apiModel.UserSignIn,
 	},
 }

@@ -8,8 +8,12 @@ type UpdateUser struct {
 	Email       string `json:"email" bson:"email"`
 	Contact     string `json:"contact" bson:"contact"`
 	Designation string `json:"designation" bson:"designation"`
-	EncPW       string `json:"encpw" bson:"encpw"`
-	Status      string `json:"status" bson:"status"`
+	// EncPW       string `json:"encpw" bson:"encpw"`
+	Status string `json:"status" bson:"status"`
+}
+type UpdateUserStatus struct {
+	AppUserID primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Status    string             `json:"status" bson:"status"`
 }
 
 type UserForMatrixView struct {

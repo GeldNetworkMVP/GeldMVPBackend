@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/GeldNetworkMVP/GeldMVPBackend/blockchain/tokens"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/errors"
 	"github.com/gorilla/mux"
 )
@@ -68,4 +70,32 @@ func CheckBalance(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+}
+
+func GetIssuerAccount(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var TokenIssuerPK, EncodedTokenIssuerSK, err = tokens.CreateIssuer()
+	if err != nil && TokenIssuerPK == "" && EncodedTokenIssuerSK == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(err)
+	} else {
+		var TokenKeys = model.Keys{
+			PK: TokenIssuerPK,
+			SK: EncodedTokenIssuerSK,
+		}
+		res, err := businessFacade.SaveStellarKeys(TokenKeys)
+		if err != nil {
+			fmt.Println(err)
+			return
+		} else {
+
+		}
+		//send the response
+		result := model.IssuerResponse{
+			IssuerPK: TokenIssuerPK,
+			Result:   res,
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(result)
+	}
 }
