@@ -1,7 +1,9 @@
 package businessFacade
 
 import (
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -67,6 +69,7 @@ func GetProjectionDataMatrixViewForTokenData() bson.D {
 		{Key: "status", Value: 1},
 		{Key: "bcstatus", Value: 1},
 		{Key: "tokenhash", Value: 1},
+		{Key: "tokenissuer", Value: 1},
 	}
 	return projection
 }
@@ -83,7 +86,11 @@ func GenerateToken(templates []map[string]interface{}) (string, string, error) {
 
 	jsonString := string(templatesJSON)
 	htmlContent := fmt.Sprintf("<html><body><h1>Add some code here</h1><pre>%s</pre></body></html>", jsonString)
-	return htmlContent, "", nil
+	hasher := sha256.New()
+	hasher.Write([]byte(htmlContent))
+	hashBytes := hasher.Sum(nil)
+	hashString := hex.EncodeToString(hashBytes)
+	return htmlContent, hashString, nil
 }
 
 func GetProofBasedOnTemplateTxnHashAndTemplateID(id string, txnhash string) (string, error) {

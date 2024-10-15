@@ -21,8 +21,8 @@ func (r *UserRepository) CreateUsers(users model.AppUser) (string, error) {
 	return repositories.Save(users, User)
 }
 
-func (r *UserRepository) GetUserByID(userID string) (model.AppUser, error) {
-	var user model.AppUser
+func (r *UserRepository) GetUserByID(userID string) (model.AppUserDetails, error) {
+	var user model.AppUserDetails
 	objectId, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		logs.WarningLogger.Println("Error Occured when trying to convert hex string in to Object(ID) in GetUserByID : userRepository: ", err.Error())
@@ -41,8 +41,8 @@ func (r *UserRepository) GetUserByID(userID string) (model.AppUser, error) {
 	return user, err
 }
 
-func (r *UserRepository) UpdateUsers(UpdateObject requestDtos.UpdateUser, update primitive.M) (model.AppUser, error) {
-	var appUpdateResponse model.AppUser
+func (r *UserRepository) UpdateUsers(UpdateObject requestDtos.UpdateUser, update primitive.M) (model.AppUserDetails, error) {
+	var appUpdateResponse model.AppUserDetails
 	upsert := false
 	after := options.After
 	opt := options.FindOneAndUpdateOptions{
@@ -71,8 +71,8 @@ func (r *UserRepository) DeleteUser(userID primitive.ObjectID) error {
 
 }
 
-func (r *UserRepository) GetUserssDataPaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []model.AppUser, sort int) (model.UserPaginatedResponse, error) {
-	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]model.AppUser](
+func (r *UserRepository) GetUserssDataPaginatedResponse(filterConfig bson.M, projectionData bson.D, pagesize int32, pageNo int32, collectionName string, sortingFeildName string, data []model.AppUserDetails, sort int) (model.UserPaginatedResponse, error) {
+	contentResponse, paginationResponse, err := repositories.PaginateResponse[[]model.AppUserDetails](
 		filterConfig,
 		projectionData,
 		pagesize,
@@ -91,8 +91,8 @@ func (r *UserRepository) GetUserssDataPaginatedResponse(filterConfig bson.M, pro
 	return response, nil
 }
 
-func (r *UserRepository) TestGetAllUsers() ([]model.AppUser, error) {
-	var allUsers []model.AppUser
+func (r *UserRepository) TestGetAllUsers() ([]model.AppUserDetails, error) {
+	var allUsers []model.AppUserDetails
 	findOptions := options.Find()
 	result, err := connections.GetSessionClient(User).Find(context.TODO(), bson.D{{}}, findOptions)
 	if err != nil {
@@ -100,7 +100,7 @@ func (r *UserRepository) TestGetAllUsers() ([]model.AppUser, error) {
 		return allUsers, err
 	}
 	for result.Next(context.TODO()) {
-		var user model.AppUser
+		var user model.AppUserDetails
 		err = result.Decode(&user)
 		if err != nil {
 			logs.ErrorLogger.Println("Error occured while retreving data from collection partner in GetAllUserss:UsersRepository.go: ", err.Error())
@@ -111,17 +111,17 @@ func (r *UserRepository) TestGetAllUsers() ([]model.AppUser, error) {
 	return allUsers, nil
 }
 
-func (r *UserRepository) GetUsersByStatus(idName string, id string) ([]model.AppUser, error) {
+func (r *UserRepository) GetUsersByStatus(idName string, id string) ([]model.AppUserDetails, error) {
 	ctx := context.TODO()
 	cursor, err := connections.GetSessionClient(User).Find(ctx, bson.M{idName: id})
 	if err != nil {
 		return nil, err
 	}
 
-	var users []model.AppUser
+	var users []model.AppUserDetails
 
 	for cursor.Next(ctx) {
-		var result model.AppUser
+		var result model.AppUserDetails
 		err := cursor.Decode(&result)
 		if err != nil {
 			logs.ErrorLogger.Println("Error retrieving users:", err.Error())
@@ -133,4 +133,40 @@ func (r *UserRepository) GetUsersByStatus(idName string, id string) ([]model.App
 		return nil, err
 	}
 	return users, nil
+}
+
+func (r *UserRepository) UpdateUsersStatus(UpdateObject requestDtos.UpdateUserStatus, update primitive.M) (model.AppUserDetails, error) {
+	var appUpdateResponse model.AppUserDetails
+	upsert := false
+	after := options.After
+	opt := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	rst := connections.GetSessionClient("appusers").FindOneAndUpdate(context.TODO(), bson.M{"_id": UpdateObject.AppUserID}, update, &opt)
+	if rst != nil {
+		err := rst.Decode((&appUpdateResponse))
+		if err != nil {
+			logs.ErrorLogger.Println("Error Occured while Update User", err.Error())
+			return appUpdateResponse, err
+		}
+		return appUpdateResponse, err
+	}
+	return appUpdateResponse, nil
+}
+
+func (r *UserRepository) GetUserEncPW(username string) (model.AppUser, error) {
+	var user model.AppUser
+	rst, err := connections.GetSessionClient("appusers").Find(context.TODO(), bson.M{"email": username})
+	if err != nil {
+		return user, err
+	}
+	for rst.Next(context.TODO()) {
+		err = rst.Decode(&user)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection document in GetUserByID:userRepository.go: ", err.Error())
+			return user, err
+		}
+	}
+	return user, err
 }

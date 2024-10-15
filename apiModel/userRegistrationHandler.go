@@ -2,11 +2,13 @@ package apiModel
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	// "strconv"
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/commonResponse"
@@ -42,15 +44,15 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		// encres := commons.Encrypt(requestCreateUser.Password)
+		encres := commons.Encrypt(requestCreateUser.Password)
 		obj := model.AppUser{
 			AppUserID: requestCreateUser.AppUserID,
 			// AdminUserID: requestCreateUser.AdminUserID,
 			Email:       requestCreateUser.Email,
 			Contact:     requestCreateUser.Contact,
 			Designation: requestCreateUser.Designation,
-			// EncPW:       encres,
-			Status: requestCreateUser.Status,
+			EncPW:       encres,
+			Status:      requestCreateUser.Status,
 		}
 		result, err1 := businessFacade.CreateUsers(obj)
 		if err1 != nil {
@@ -83,7 +85,7 @@ func GetUsersByID(w http.ResponseWriter, r *http.Request) {
 			commonResponse.NotFound(w, "No record found for the given query.")
 			return
 		} else {
-			commonResponse.SuccessStatus[model.AppUser](w, result)
+			commonResponse.SuccessStatus[model.AppUserDetails](w, result)
 		}
 	}
 
@@ -116,7 +118,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			errors.BadRequest(w, err.Error())
 			return
 		}
-		commonResponse.SuccessStatus[model.AppUser](w, result)
+		commonResponse.SuccessStatus[model.AppUserDetails](w, result)
 	}
 }
 
@@ -261,7 +263,59 @@ func GetUsersByStatus(w http.ResponseWriter, r *http.Request) {
 			commonResponse.NotFound(w, "No record found for the given query.")
 			return
 		} else {
-			commonResponse.SuccessStatus[[]model.AppUser](w, result)
+			commonResponse.SuccessStatus[[]model.AppUserDetails](w, result)
+		}
+	}
+
+}
+
+func UpdateUserStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	var UpdateObject requestDtos.UpdateUserStatus
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&UpdateObject)
+	if err != nil {
+		logs.ErrorLogger.Println(err.Error())
+		errors.BadRequest(w, err.Error())
+		return
+	} else {
+		result, err := businessFacade.UpdateUsersStatus(UpdateObject)
+		if err != nil {
+			logs.WarningLogger.Println("Failed to update users : ", err.Error())
+			errors.BadRequest(w, err.Error())
+			return
+		}
+		commonResponse.SuccessStatus[model.AppUserDetails](w, result)
+	}
+}
+
+func UserSignIn(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	vars := mux.Vars(r)
+	fmt.Println("username ", vars["username"])
+	result, err := businessFacade.GetUserEncPW(vars["username"])
+	if err != nil {
+		logs.WarningLogger.Println("Failed to get users : ", err.Error())
+		errors.BadRequest(w, err.Error())
+		return
+	} else {
+		fmt.Println("result: ", result)
+		bytepw := result.EncPW
+		pw := commons.Decrypt(bytepw)
+		fmt.Println("pw---- ", pw)
+		if pw == (vars["encpw"]) {
+			token, err := commons.GenerateTokenForUser(vars["username"])
+			if err != nil {
+				logs.WarningLogger.Println("Failed to generate tokens : ", err.Error())
+				errors.BadRequest(w, err.Error())
+				return
+			} else {
+				json.NewEncoder(w).Encode(map[string]string{"token": token})
+			}
+		} else {
+			logs.WarningLogger.Println("Failed validate password")
+			errors.BadRequest(w, err.Error())
+			return
 		}
 	}
 

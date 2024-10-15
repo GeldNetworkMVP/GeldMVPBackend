@@ -12,6 +12,7 @@ type Tokens struct {
 	IPFSStatus  string             `json:"status" bson:"status"`
 	BCStatus    string             `json:"bcstatus" bson:"bcstatus"`
 	TokenHash   string             `json:"tokenhash" bson:"tokenhash"`
+	TokenIssuer string             `json:"tokenissuer" bson:"tokenissuer"`
 }
 
 type TokenPayload struct {
@@ -21,8 +22,8 @@ type TokenPayload struct {
 	Description string             `json:"description" bson:"description"`
 	Price       string             `json:"price" bson:"price"`
 	FileType    string             `json:"filetype" bson:"filetype"`
-	BCStatus    string             `json:"bcstatus" bson:"bcstatus"`
 	BCHash      string             `json:"bchash" bson:"bchash"`
+	TokenIssuer string             `json:"tokenissuer" bson:"tokenissuer"`
 }
 
 type TokenPaginatedresponse struct {

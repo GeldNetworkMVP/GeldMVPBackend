@@ -8,10 +8,11 @@ import (
 var TokenRoutes = model.Routers{
 	//Route will be used to add a new template of token data to DB
 	model.Router{
-		Name:    "Save Token Data",
-		Method:  "POST",
-		Path:    "/token/save",
-		Handler: apiModel.SaveToken,
+		Name:      "Save Token Data",
+		Method:    "POST",
+		Path:      "/token/save",
+		Handler:   apiModel.SaveToken,
+		Protected: true,
 	},
 	//Route will be used to get token by ID
 	model.Router{
@@ -36,10 +37,11 @@ var TokenRoutes = model.Routers{
 	},
 	//Route will be used to get all transactions by plot id
 	model.Router{
-		Name:    "Get all transactions by PlotID",
-		Method:  "GET",
-		Path:    "/transactions/plot/{plotid}",
-		Handler: apiModel.GetAllTransactionsByPlotID,
+		Name:      "Get all transactions by PlotID",
+		Method:    "GET",
+		Path:      "/transactions/plot/{plotid}",
+		Handler:   apiModel.GetAllTransactionsByPlotID,
+		Protected: true,
 	},
 	//Get Proof based on TransactionHash
 	model.Router{

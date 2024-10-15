@@ -8,8 +8,8 @@ type AppUser struct {
 	Email       string `json:"email" bson:"email"`
 	Contact     string `json:"contact" bson:"contact"`
 	Designation string `json:"designation" bson:"designation"`
-	// EncPW       []byte `json:"encpw" bson:"encpw"`
-	Status string `json:"status" bson:"status"`
+	EncPW       []byte `json:"encpw" bson:"encpw"`
+	Status      string `json:"status" bson:"status"`
 }
 
 type UserPayload struct {
@@ -18,11 +18,20 @@ type UserPayload struct {
 	Email       string `json:"email" bson:"email"`
 	Contact     string `json:"contact" bson:"contact"`
 	Designation string `json:"designation" bson:"designation"`
-	// Password    string `json:"encpw" bson:"encpw"`
-	Status string `json:"status" bson:"status"`
+	Password    string `json:"encpw" bson:"encpw"`
+	Status      string `json:"status" bson:"status"`
 }
 
 type UserPaginatedResponse struct {
-	Content        []AppUser `json:"content" bson:"content" validate:"required"`
+	Content        []AppUserDetails `json:"content" bson:"content" validate:"required"`
 	PaginationInfo PaginationTemplate
+}
+
+type AppUserDetails struct {
+	AppUserID primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	// AdminUserID string             `json:"userid" bson:"userid"`
+	Email       string `json:"email" bson:"email"`
+	Contact     string `json:"contact" bson:"contact"`
+	Designation string `json:"designation" bson:"designation"`
+	Status      string `json:"status" bson:"status"`
 }

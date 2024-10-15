@@ -17,6 +17,7 @@ type TokenRepository struct{}
 
 var Tokens = "tokens"
 var Transactions = "transactions"
+var Keys = "stellarkeys"
 
 func (r *TokenRepository) SaveTokens(tokens model.Tokens) (string, error) {
 	return repositories.Save(tokens, Tokens)
@@ -128,4 +129,25 @@ func (r *TokenRepository) GetAllTransactionsByPlotID(idName string, id string) (
 		return nil, err
 	}
 	return transactions, nil
+}
+
+func (r *TokenRepository) SaveStellarKeys(keys model.Keys) (string, error) {
+	return repositories.Save(keys, Keys)
+}
+
+func (r *TokenRepository) GetStellarKeys(pk string) (model.Keys, error) {
+	var keys model.Keys
+
+	rst, err := connections.GetSessionClient(Keys).Find(context.TODO(), bson.M{"pk": pk})
+	if err != nil {
+		return keys, err
+	}
+	for rst.Next(context.TODO()) {
+		err = rst.Decode(&keys)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving keys from collection document in GetStellarKeys:tokenRepository.go: ", err.Error())
+			return keys, err
+		}
+	}
+	return keys, err
 }

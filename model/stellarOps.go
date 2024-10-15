@@ -9,3 +9,13 @@ type ManageData struct {
 	To             string
 	From           string
 }
+
+type Keys struct {
+	PK string
+	SK []byte
+}
+
+type IssuerResponse struct {
+	IssuerPK string
+	Result   string
+}

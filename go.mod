@@ -53,6 +53,7 @@ require (
 	github.com/go-openapi/runtime v0.28.0
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/gobeam/mongo-go-pagination v0.0.8
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/gorilla/context v1.1.2
 	github.com/gorilla/handlers v1.5.2

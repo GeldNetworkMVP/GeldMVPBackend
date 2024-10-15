@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/GeldNetworkMVP/GeldMVPBackend/blockchain/tokens"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/commons"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
@@ -54,35 +55,42 @@ func SaveToken(W http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					errors.BadRequest(W, err.Error())
 				} else {
-					object := model.Tokens{
-						TokenID:     requestCreateToken.TokenID,
-						PlotID:      requestCreateToken.PlotID,
-						TokenName:   requestCreateToken.TokenName,
-						Description: requestCreateToken.Description,
-						CID:         cid,
-						Price:       requestCreateToken.Price,
-						IPFSStatus:  "Sent to IPFS",
-						BCStatus:    requestCreateToken.BCStatus,
-						TokenHash:   tokenhash,
-					}
-					result, err1 := businessFacade.SaveTokens(object)
-					if err1 != nil {
+					bchash, err := tokens.PutTokenOnSaleToken(requestCreateToken.TokenIssuer, requestCreateToken.TokenName, cid, tokenhash, requestCreateToken.Price)
+					if err != nil {
 						errors.BadRequest(W, err.Error())
 					} else {
-						//TODO: check BC Status as well and do a comparison later on
-						newobj := model.TokenTransactions{
-							TransactionStatus: "OnSale",
-							TokenName:         requestCreateToken.TokenName,
-							TXNHash:           requestCreateToken.BCHash,
-							PlotID:            requestCreateToken.PlotID,
-							TokenID:           result,
-							DBStatus:          "Saved",
+						fmt.Println("price: ", requestCreateToken.Price)
+						object := model.Tokens{
+							TokenID:     requestCreateToken.TokenID,
+							PlotID:      requestCreateToken.PlotID,
+							TokenName:   requestCreateToken.TokenName,
+							Description: requestCreateToken.Description,
+							CID:         cid,
+							Price:       requestCreateToken.Price,
+							IPFSStatus:  "Sent to IPFS",
+							BCStatus:    "OnSale",
+							TokenHash:   tokenhash,
+							TokenIssuer: requestCreateToken.TokenIssuer,
 						}
-						result1, err2 := businessFacade.SaveTransaction(newobj)
-						if err2 != nil {
+						result, err1 := businessFacade.SaveTokens(object)
+						if err1 != nil {
 							errors.BadRequest(W, err.Error())
 						} else {
-							commonResponse.SuccessStatus[string](W, result1)
+							//TODO: check BC Status as well and do a comparison later on
+							newobj := model.TokenTransactions{
+								TransactionStatus: "OnSale",
+								TokenName:         requestCreateToken.TokenName,
+								TXNHash:           bchash,
+								PlotID:            requestCreateToken.PlotID,
+								TokenID:           result,
+								DBStatus:          "Saved",
+							}
+							result1, err2 := businessFacade.SaveTransaction(newobj)
+							if err2 != nil {
+								errors.BadRequest(W, err.Error())
+							} else {
+								commonResponse.SuccessStatus[string](W, result1)
+							}
 						}
 					}
 				}
