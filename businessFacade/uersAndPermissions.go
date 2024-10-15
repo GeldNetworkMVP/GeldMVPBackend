@@ -67,9 +67,13 @@ func TestGetAllUsers() ([]model.AppUserDetails, error) {
 }
 
 func GetUsersByStatus(status string) ([]model.AppUserDetails, error) {
-	return userRepository.GetUsersByStatus("status", status)
+	return userRepository.GetUsersByField("status", status)
 }
 
 func GetUserEncPW(username string) (model.AppUser, error) {
 	return userRepository.GetUserEncPW(username)
+}
+
+func GetUserExistence(email string) (model.AppUserDetails, error) {
+	return userRepository.GetSingleUserByField(email, "email")
 }

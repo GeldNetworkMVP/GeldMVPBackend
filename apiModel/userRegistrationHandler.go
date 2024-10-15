@@ -53,6 +53,7 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 			Designation: requestCreateUser.Designation,
 			EncPW:       encres,
 			Status:      requestCreateUser.Status,
+			Company:     requestCreateUser.Company,
 		}
 		result, err1 := businessFacade.CreateUsers(obj)
 		if err1 != nil {
@@ -289,33 +290,78 @@ func UpdateUserStatus(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UserSignIn(w http.ResponseWriter, r *http.Request) {
+func UserSignIn(w http.ResponseWriter, r *http.Request) { //request-body
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	vars := mux.Vars(r)
-	fmt.Println("username ", vars["username"])
-	result, err := businessFacade.GetUserEncPW(vars["username"])
+	var userObj model.AppCredentials
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&userObj)
 	if err != nil {
-		logs.WarningLogger.Println("Failed to get users : ", err.Error())
+		logs.ErrorLogger.Println(err.Error())
 		errors.BadRequest(w, err.Error())
 		return
 	} else {
-		fmt.Println("result: ", result)
-		bytepw := result.EncPW
-		pw := commons.Decrypt(bytepw)
-		fmt.Println("pw---- ", pw)
-		if pw == (vars["encpw"]) {
-			token, err := commons.GenerateTokenForUser(vars["username"])
-			if err != nil {
-				logs.WarningLogger.Println("Failed to generate tokens : ", err.Error())
-				errors.BadRequest(w, err.Error())
-				return
-			} else {
-				json.NewEncoder(w).Encode(map[string]string{"token": token})
-			}
-		} else {
-			logs.WarningLogger.Println("Failed validate password")
+		result, err := businessFacade.GetUserEncPW(userObj.Email)
+		if err != nil {
+			logs.WarningLogger.Println("Failed to get users : ", err.Error())
 			errors.BadRequest(w, err.Error())
 			return
+		} else {
+			fmt.Println("result: ", result)
+			bytepw := result.EncPW
+			pw := commons.Decrypt(bytepw)
+			fmt.Println("pw---- ", pw)
+			if pw == userObj.Pw {
+				token, err := commons.GenerateTokenForUser(userObj.Email)
+				if err != nil {
+					logs.WarningLogger.Println("Failed to generate tokens : ", err.Error())
+					errors.BadRequest(w, err.Error())
+					return
+				} else {
+					json.NewEncoder(w).Encode(map[string]string{"token": token})
+				}
+			} else {
+				logs.WarningLogger.Println("Failed validate password")
+				errors.BadRequest(w, err.Error())
+				return
+			}
+		}
+	}
+}
+
+func UserExistence(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	vars := mux.Vars(r)
+	result, err := businessFacade.GetUserExistence(vars["email"])
+	if err != nil {
+		errors.BadRequest(w, err.Error())
+	} else {
+		if result.AppUserID == primitive.NilObjectID {
+			obj := model.UserExistence{
+				Status:    "N/A",
+				Operative: "No record in existence",
+			}
+			commonResponse.SuccessStatus[model.UserExistence](w, obj)
+		} else {
+			fmt.Println("Account exists")
+			if result.Status == "accepted" {
+				obj := model.UserExistence{
+					Status:    "Accepted",
+					Operative: result.Designation,
+				}
+				commonResponse.SuccessStatus[model.UserExistence](w, obj)
+			} else if result.Status == "rejected" {
+				obj := model.UserExistence{
+					Status:    "Rejected",
+					Operative: result.Designation,
+				}
+				commonResponse.SuccessStatus[model.UserExistence](w, obj)
+			} else {
+				obj := model.UserExistence{
+					Status:    "Pending",
+					Operative: result.Designation,
+				}
+				commonResponse.SuccessStatus[model.UserExistence](w, obj)
+			}
 		}
 	}
 
