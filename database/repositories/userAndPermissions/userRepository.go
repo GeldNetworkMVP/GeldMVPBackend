@@ -111,7 +111,7 @@ func (r *UserRepository) TestGetAllUsers() ([]model.AppUserDetails, error) {
 	return allUsers, nil
 }
 
-func (r *UserRepository) GetUsersByStatus(idName string, id string) ([]model.AppUserDetails, error) {
+func (r *UserRepository) GetUsersByField(idName string, id string) ([]model.AppUserDetails, error) {
 	ctx := context.TODO()
 	cursor, err := connections.GetSessionClient(User).Find(ctx, bson.M{idName: id})
 	if err != nil {
@@ -158,6 +158,22 @@ func (r *UserRepository) UpdateUsersStatus(UpdateObject requestDtos.UpdateUserSt
 func (r *UserRepository) GetUserEncPW(username string) (model.AppUser, error) {
 	var user model.AppUser
 	rst, err := connections.GetSessionClient("appusers").Find(context.TODO(), bson.M{"email": username})
+	if err != nil {
+		return user, err
+	}
+	for rst.Next(context.TODO()) {
+		err = rst.Decode(&user)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection document in GetUserByID:userRepository.go: ", err.Error())
+			return user, err
+		}
+	}
+	return user, err
+}
+
+func (r *UserRepository) GetSingleUserByField(userID string, id string) (model.AppUserDetails, error) {
+	var user model.AppUserDetails
+	rst, err := connections.GetSessionClient("appusers").Find(context.TODO(), bson.M{id: userID})
 	if err != nil {
 		return user, err
 	}

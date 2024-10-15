@@ -73,7 +73,14 @@ var AppUserRoutes = model.Routers{
 	model.Router{
 		Name:    "User Sign In",
 		Method:  "GET",
-		Path:    "/usersignin/{username}/{encpw}",
+		Path:    "/usersignin",
 		Handler: apiModel.UserSignIn,
+	},
+	//Check User Existence
+	model.Router{
+		Name:    "User Existence Check",
+		Method:  "GET",
+		Path:    "/userexists/{email}",
+		Handler: apiModel.UserExistence,
 	},
 }
