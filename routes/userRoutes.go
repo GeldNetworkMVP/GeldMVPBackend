@@ -72,7 +72,7 @@ var AppUserRoutes = model.Routers{
 	//Login
 	model.Router{
 		Name:    "User Sign In",
-		Method:  "GET",
+		Method:  "POST",
 		Path:    "/usersignin",
 		Handler: apiModel.UserSignIn,
 	},
