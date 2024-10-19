@@ -317,8 +317,8 @@ func UserSignIn(w http.ResponseWriter, r *http.Request) { //request-body
 					errors.BadRequest(w, err.Error())
 					return
 				} else {
-
-					json.NewEncoder(w).Encode(map[string]string{"token": token, "email": result.Email, "contact": result.Contact, "designation": result.Designation, "company": result.Company})
+					objectIdString := result.AppUserID.Hex()
+					json.NewEncoder(w).Encode(map[string]string{"token": token, "email": result.Email, "contact": result.Contact, "designation": result.Designation, "company": result.Company, "userid": objectIdString})
 				}
 			} else {
 				logs.WarningLogger.Println("Failed validate password")
