@@ -44,22 +44,37 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		encres := commons.Encrypt(requestCreateUser.Password)
-		obj := model.AppUser{
-			AppUserID: requestCreateUser.AppUserID,
-			// AdminUserID: requestCreateUser.AdminUserID,
-			Email:       requestCreateUser.Email,
-			Contact:     requestCreateUser.Contact,
-			Designation: requestCreateUser.Designation,
-			EncPW:       encres,
-			Status:      requestCreateUser.Status,
-			Company:     requestCreateUser.Company,
-		}
-		result, err1 := businessFacade.CreateUsers(obj)
-		if err1 != nil {
+		result, err := businessFacade.GetUserExistence(requestCreateUser.Email)
+		if err != nil {
 			errors.BadRequest(W, err.Error())
 		} else {
-			commonResponse.SuccessStatus[string](W, result)
+			if result.Email == "" {
+				encres := commons.Encrypt(requestCreateUser.Password)
+				obj := model.AppUser{
+					AppUserID: requestCreateUser.AppUserID,
+					// AdminUserID: requestCreateUser.AdminUserID,
+					Email:       requestCreateUser.Email,
+					Contact:     requestCreateUser.Contact,
+					Designation: requestCreateUser.Designation,
+					EncPW:       encres,
+					Status:      requestCreateUser.Status,
+					Company:     requestCreateUser.Company,
+				}
+				result, err1 := businessFacade.CreateUsers(obj)
+				if err1 != nil {
+					errors.BadRequest(W, err.Error())
+				} else {
+					commonResponse.SuccessStatus[string](W, result)
+				}
+			} else {
+				W.WriteHeader(http.StatusOK)
+				message := "User with the same email exists"
+				err := json.NewEncoder(W).Encode(message)
+				if err != nil {
+					logs.ErrorLogger.Println(err)
+				}
+				return
+			}
 		}
 	}
 }
