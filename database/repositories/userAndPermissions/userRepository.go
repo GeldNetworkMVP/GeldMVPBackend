@@ -186,3 +186,23 @@ func (r *UserRepository) GetSingleUserByField(userID string, id string) (model.A
 	}
 	return user, err
 }
+
+func (r *UserRepository) UpdateUsersPublicKey(UpdateObject requestDtos.UpdateUserPublicKey, update primitive.M) (model.AppUserDetails, error) {
+	var appUpdateResponse model.AppUserDetails
+	upsert := false
+	after := options.After
+	opt := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	rst := connections.GetSessionClient("appusers").FindOneAndUpdate(context.TODO(), bson.M{"email": UpdateObject.Email}, update, &opt)
+	if rst != nil {
+		err := rst.Decode((&appUpdateResponse))
+		if err != nil {
+			logs.ErrorLogger.Println("Error Occured while Update User Public Key", err.Error())
+			return appUpdateResponse, err
+		}
+		return appUpdateResponse, err
+	}
+	return appUpdateResponse, nil
+}

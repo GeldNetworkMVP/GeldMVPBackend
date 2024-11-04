@@ -10,7 +10,7 @@ var BlockchainRoutes = model.Routers{
 	model.Router{
 		Name:      "Set New account active",
 		Method:    "GET",
-		Path:      "/account/activate/{publickey}",
+		Path:      "/account/activate",
 		Handler:   apiModel.ActivateNewAccount,
 		Protected: true,
 	},

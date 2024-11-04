@@ -7,37 +7,53 @@ import (
 
 	"github.com/GeldNetworkMVP/GeldMVPBackend/blockchain/tokens"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/businessFacade"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/errors"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"github.com/gorilla/mux"
 )
 
 func ActivateNewAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
-	vars := mux.Vars(r)
-	response, err := businessFacade.CheckBalance(vars["publickey"])
+	var UpdateObject requestDtos.UpdateUserPublicKey
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&UpdateObject)
 	if err != nil {
+		logs.ErrorLogger.Println(err.Error())
 		errors.BadRequest(w, err.Error())
-	}
-	if response == "Not active" {
-		result, err := businessFacade.ActivateNewAccount(vars["publickey"])
+		return
+	} else {
+		response, err := businessFacade.CheckBalance(UpdateObject.PublicKey)
 		if err != nil {
 			errors.BadRequest(w, err.Error())
-			return
+		}
+		if response == "Not active" {
+			result, err := businessFacade.ActivateNewAccount(UpdateObject.PublicKey)
+			if err != nil {
+				errors.BadRequest(w, err.Error())
+				return
+			} else {
+				res, err := businessFacade.UpdateUsersPublicKey(UpdateObject)
+				if err != nil && res.PublicKey == "" {
+					errors.BadRequest(w, err.Error())
+					return
+				} else {
+					w.Header().Set("Content-Type", "application/json")
+					err := json.NewEncoder(w).Encode(result)
+					if err != nil {
+						fmt.Fprintf(w, "Error encoding response: %v", err)
+						return
+					}
+				}
+			}
 		} else {
 			w.Header().Set("Content-Type", "application/json")
-			err := json.NewEncoder(w).Encode(result)
+			err := json.NewEncoder(w).Encode("Account is active")
 			if err != nil {
 				fmt.Fprintf(w, "Error encoding response: %v", err)
 				return
 			}
-		}
-	} else {
-		w.Header().Set("Content-Type", "application/json")
-		err := json.NewEncoder(w).Encode("Account is active")
-		if err != nil {
-			fmt.Fprintf(w, "Error encoding response: %v", err)
-			return
 		}
 	}
 }
