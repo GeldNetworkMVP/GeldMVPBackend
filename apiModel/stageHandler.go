@@ -43,11 +43,26 @@ func CreateStage(W http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		result, err1 := businessFacade.CreateStages(requestCreateStage)
-		if err1 != nil {
+		result, err := businessFacade.GetStageExistence(requestCreateStage.StageName)
+		if err != nil {
 			errors.BadRequest(W, err.Error())
 		} else {
-			commonResponse.SuccessStatus[string](W, result)
+			if result.StageName == "" {
+				result, err1 := businessFacade.CreateStages(requestCreateStage)
+				if err1 != nil {
+					errors.BadRequest(W, err.Error())
+				} else {
+					commonResponse.SuccessStatus[string](W, result)
+				}
+			} else {
+				W.WriteHeader(http.StatusOK)
+				message := "Stage with the same name exists"
+				err := json.NewEncoder(W).Encode(message)
+				if err != nil {
+					logs.ErrorLogger.Println(err)
+				}
+				return
+			}
 		}
 	}
 }
@@ -257,4 +272,33 @@ func TestGetAllStages(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func FilterExistingStages(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset-UTF-8")
+	var stages model.StagesNames
+	var validStages []string
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&stages)
+	if err != nil {
+		logs.ErrorLogger.Println("Error occured while decoding JSON in CreateStages:stagesHandler: ", err.Error())
+	} else {
+		for _, stage := range stages.StageArray {
+			result, err := businessFacade.GetStageExistence(stage)
+			if err != nil {
+				errors.BadRequest(w, err.Error())
+			} else {
+				if result.StageName != "" {
+					validStages = append(validStages, stage)
+				}
+			}
+		}
+		w.WriteHeader(http.StatusOK)
+		err := json.NewEncoder(w).Encode(validStages)
+		if err != nil {
+			logs.ErrorLogger.Println(err)
+		}
+		return
+	}
+
 }

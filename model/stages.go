@@ -19,3 +19,7 @@ type StagePaginatedresponse struct {
 	Content        []Stages `json:"content" bson:"content" validate:"required"`
 	PaginationInfo PaginationTemplate
 }
+
+type StagesNames struct {
+	StageArray []string `json:"stagearray" bson:"stagearray"`
+}

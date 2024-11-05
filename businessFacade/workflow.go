@@ -68,3 +68,7 @@ func TestWorkflowDataPagination(paginationData requestDtos.WorkflowForMatrixView
 func TestGetAllWorkflows() ([]model.Workflows, error) {
 	return workflowRepository.TestGetAllWorkflows()
 }
+
+func GetWorkflowExistence(workflow string) (model.Workflows, error) {
+	return workflowRepository.GetSingleWorkflowByField(workflow, "workflowname")
+}

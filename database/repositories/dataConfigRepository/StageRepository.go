@@ -127,3 +127,19 @@ func (r *StageRepository) TestGetAllStages() ([]model.Stages, error) {
 	}
 	return allStages, nil
 }
+
+func (r *StageRepository) GetSingleStageByField(userID string, id string) (model.Stages, error) {
+	var stage model.Stages
+	rst, err := connections.GetSessionClient(Stages).Find(context.TODO(), bson.M{id: userID})
+	if err != nil {
+		return stage, err
+	}
+	for rst.Next(context.TODO()) {
+		err = rst.Decode(&stage)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection document in GetSingleStageByField:StageRepository.go: ", err.Error())
+			return stage, err
+		}
+	}
+	return stage, err
+}
