@@ -63,10 +63,10 @@ var StageRoutes = model.Routers{
 	},
 	//Will return all the Stages that exist
 	model.Router{
-		Name:    "Check Stage Existence",
-		Method:  "POST",
-		Path:    "/stage/exists",
-		Handler: apiModel.FilterExistingStages,
-		//Protected: true,
+		Name:      "Check Stage Existence",
+		Method:    "POST",
+		Path:      "/stage/exists",
+		Handler:   apiModel.FilterExistingStages,
+		Protected: true,
 	},
 }
