@@ -59,6 +59,7 @@ func CreateUser(W http.ResponseWriter, r *http.Request) {
 					EncPW:       encres,
 					Status:      requestCreateUser.Status,
 					Company:     requestCreateUser.Company,
+					Username:    requestCreateUser.Username,
 				}
 				result, err1 := businessFacade.CreateUsers(obj)
 				if err1 != nil {

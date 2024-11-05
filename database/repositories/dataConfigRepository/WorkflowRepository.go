@@ -110,3 +110,19 @@ func (r *WorkflowRepository) TestGetAllWorkflows() ([]model.Workflows, error) {
 	}
 	return allWorkflows, nil
 }
+
+func (r *WorkflowRepository) GetSingleWorkflowByField(userID string, id string) (model.Workflows, error) {
+	var workflow model.Workflows
+	rst, err := connections.GetSessionClient(Workflow).Find(context.TODO(), bson.M{id: userID})
+	if err != nil {
+		return workflow, err
+	}
+	for rst.Next(context.TODO()) {
+		err = rst.Decode(&workflow)
+		if err != nil {
+			logs.ErrorLogger.Println("Error occured while retreving data from collection document in GetSingleWorkflowByField:WorkflowRepository.go: ", err.Error())
+			return workflow, err
+		}
+	}
+	return workflow, err
+}

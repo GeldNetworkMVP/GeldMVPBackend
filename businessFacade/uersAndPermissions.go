@@ -77,3 +77,11 @@ func GetUserEncPW(username string) (model.AppUser, error) {
 func GetUserExistence(email string) (model.AppUserDetails, error) {
 	return userRepository.GetSingleUserByField(email, "email")
 }
+
+func UpdateUsersPublicKey(UpdateObject requestDtos.UpdateUserPublicKey) (model.AppUserDetails, error) {
+	update := bson.M{
+		"$set": bson.M{"publickey": UpdateObject.PublicKey},
+		//, "encpw": UpdateObject.EncPW},
+	}
+	return userRepository.UpdateUsersPublicKey(UpdateObject, update)
+}

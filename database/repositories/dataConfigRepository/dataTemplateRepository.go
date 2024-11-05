@@ -81,7 +81,7 @@ func (r *DataTemplateRepository) GetLastTemplateByPlotID(plotID string) (map[str
 
 	opts := options.FindOne().SetSort(bson.D{{Key: "_id", Value: -1}})
 	var result map[string]interface{}
-	err := connections.GetSessionClient(DataTemplate).FindOne(ctx, bson.M{"plotid": plotID}, opts).Decode(&result)
+	err := connections.GetSessionClient(DataTemplate).FindOne(ctx, bson.M{"plot._id": plotID}, opts).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			logs.ErrorLogger.Println("No template found for plotID:", plotID)

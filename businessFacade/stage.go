@@ -61,3 +61,7 @@ func GetStagesByName(stageName string) (model.Stages, error) {
 func TestGetAllStages() ([]model.Stages, error) {
 	return stageRepository.TestGetAllStages()
 }
+
+func GetStageExistence(stage string) (model.Stages, error) {
+	return stageRepository.GetSingleStageByField(stage, "stagename")
+}

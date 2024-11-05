@@ -43,12 +43,28 @@ func CreateWorkflow(W http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(W, err.Error())
 	} else {
-		result, err1 := businessFacade.CreateWorkflows(requestCreateWorkflow)
-		if err1 != nil {
+		result, err := businessFacade.GetWorkflowExistence(requestCreateWorkflow.WorkflowName)
+		if err != nil {
 			errors.BadRequest(W, err.Error())
 		} else {
-			commonResponse.SuccessStatus[string](W, result)
+			if result.WorkflowName == "" {
+				result, err1 := businessFacade.CreateWorkflows(requestCreateWorkflow)
+				if err1 != nil {
+					errors.BadRequest(W, err.Error())
+				} else {
+					commonResponse.SuccessStatus[string](W, result)
+				}
+			} else {
+				W.WriteHeader(http.StatusOK)
+				message := "Workflow with the same name exists"
+				err := json.NewEncoder(W).Encode(message)
+				if err != nil {
+					logs.ErrorLogger.Println(err)
+				}
+				return
+			}
 		}
+
 	}
 }
 

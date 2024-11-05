@@ -68,7 +68,7 @@ func SaveToken(W http.ResponseWriter, r *http.Request) {
 							CID:         cid,
 							Price:       requestCreateToken.Price,
 							IPFSStatus:  "Sent to IPFS",
-							BCStatus:    "OnSale",
+							BCStatus:    "onsale",
 							TokenHash:   tokenhash,
 							TokenIssuer: requestCreateToken.TokenIssuer,
 						}

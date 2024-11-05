@@ -23,3 +23,8 @@ type UserForMatrixView struct {
 	SortbyField   string `json:"sortbyfield" bson:"sortbyfield" `
 	SortType      int    `json:"sorttype" bson:"sorttype"`
 }
+
+type UpdateUserPublicKey struct {
+	Email     string `json:"email" bson:"email"`
+	PublicKey string `json:"publickey" bson:"publickey"`
+}
