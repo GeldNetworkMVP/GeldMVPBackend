@@ -517,7 +517,6 @@ func TestGetAllMasterData(w http.ResponseWriter, r *http.Request) {
 		} else {
 			for i := range results {
 				id := results[i].DataID.Hex()
-				fmt.Println("ID: ", id)
 
 				masterDataRecords, err := businessFacade.GetRecordDataByMasterDataID(id)
 				if err != nil {

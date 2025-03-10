@@ -1,7 +1,6 @@
 package commons
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -42,7 +41,6 @@ func GenerateTokenForUser(username string) (string, error) {
 // JWTValidationMiddleware checks the validity of the JWT token
 func JWTValidationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("here")
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			http.Error(w, "Missing Authorization Header", http.StatusUnauthorized)

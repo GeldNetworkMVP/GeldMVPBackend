@@ -59,7 +59,6 @@ func SaveToken(W http.ResponseWriter, r *http.Request) {
 					if err != nil {
 						errors.BadRequest(W, err.Error())
 					} else {
-						fmt.Println("price: ", requestCreateToken.Price)
 						object := model.Tokens{
 							TokenID:     requestCreateToken.TokenID,
 							PlotID:      requestCreateToken.PlotID,

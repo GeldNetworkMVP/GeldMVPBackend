@@ -2,7 +2,6 @@ package apiModel
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	// "strconv"
@@ -322,10 +321,8 @@ func UserSignIn(w http.ResponseWriter, r *http.Request) { //request-body
 			errors.BadRequest(w, err.Error())
 			return
 		} else {
-			fmt.Println("result: ", result)
 			bytepw := result.EncPW
 			pw := commons.Decrypt(bytepw)
-			fmt.Println("pw---- ", pw)
 			if pw == userObj.Pw {
 				token, err := commons.GenerateTokenForUser(userObj.Email)
 				if err != nil {
@@ -359,7 +356,6 @@ func UserExistence(w http.ResponseWriter, r *http.Request) {
 			}
 			commonResponse.SuccessStatus[model.UserExistence](w, obj)
 		} else {
-			fmt.Println("Account exists")
 			if result.Status == "accepted" {
 				obj := model.UserExistence{
 					Status:    "Accepted",

@@ -151,7 +151,7 @@ func GetProofBasedOnTemplateTxnHashAndTemplateID(id string, txnhash string) (str
 
 		if operation["type"] == "manage_data" {
 			entryName := operation["name"].(string)
-			if entryName == "Datahash" {
+			if entryName == "FormHash" {
 				// Decode base64 value
 				value := operation["value"].(string)
 				decodedValue, err := base64.StdEncoding.DecodeString(value)
