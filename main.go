@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/handlers"
-	//"github.com/joho/godotenv"
-	//"github.com/sirupsen/logrus"
+	// "github.com/joho/godotenv"
+	// "github.com/sirupsen/logrus"
 )
 
 // @title			Geld.Network API
@@ -34,8 +34,10 @@ func main() {
 	opts := middleware.SwaggerUIOpts{SpecURL: "/docs/swagger.yaml", Path: "api-docs"}
 	sh := middleware.SwaggerUI(opts, nil)
 	router.Handle("/api-docs", sh)
-
 	http.Handle("/api/", router)
+
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	logs.InfoLogger.Println("Gateway Started @port " + configs.GetPort() + " with " + configs.EnvName + " environment")
 	http.ListenAndServe(configs.GetPort(), handlers.CORS(originsOk, headersOk, methodsOk)(router))
 }

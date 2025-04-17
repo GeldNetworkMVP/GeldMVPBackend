@@ -1,0 +1,41 @@
+{{ define "content" }}
+
+<section class="token-detail__section">
+  <h2 class="token-detail__header">Collections</h2>
+  <div class="token-detail__items">
+    {{ range .Collections }}
+    <div class="token-detail-item">
+      <div class="token-detail-item__header">{{ .CollectionName }}</div>
+      <p>Key: {{ .Key }}</p>
+      <div class="token-detail-item__content">
+        {{ with .Data }}
+          {{ range $k, $v := . }}
+            <p><strong>{{ $k }}:</strong> {{ $v }}</p>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</section>
+
+<section class="token-detail__section">
+  <h2 class="token-detail__header">Templates</h2>
+  <div class="token-detail__items">
+    {{ range .Templates }}
+    <div class="token-detail-item">
+      <div class="token-detail-item__header">{{ .TemplateName }}</div>
+      <p>Key: {{ .Key }}</p>
+      <div class="token-detail-item__content">
+        {{ with .Data }}
+          {{ range $k, $v := . }}
+            <p><strong>{{ $k }}:</strong> {{ $v }}</p>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</section>
+
+{{ end }}

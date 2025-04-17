@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    {{template "header" .}}
+    {{template "summary" .Summary}}
+    <section class="token-details">
+        {{range .Details}}
+            {{template "details" .}}
+        {{end}}
+        {{template "timeline" .Timeline}}
+    </section>
+    <footer>All rights reserved - {{.CurrentYear}}</footer>
+</body>
+</html>
