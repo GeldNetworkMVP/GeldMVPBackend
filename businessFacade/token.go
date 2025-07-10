@@ -12,9 +12,9 @@ import (
 	// "github.com/GeldNetworkMVP/GeldMVPBackend/commons"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/dtos/requestDtos"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/model"
+	"github.com/GeldNetworkMVP/GeldMVPBackend/tokenTemplates"
 	"github.com/GeldNetworkMVP/GeldMVPBackend/utilities/logs"
 	"github.com/sirupsen/logrus"
-
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -79,18 +79,23 @@ func GetAllTransactionsByPlotID(plotid string) ([]model.TokenTransactions, error
 }
 
 func GenerateToken(templates []map[string]interface{}) (string, string, error) {
-	templatesJSON, err := json.MarshalIndent(templates, "", "  ")
-	if err != nil {
-		return "", "", fmt.Errorf("error converting templates to JSON: %v", err)
-	}
+	// templatesJSON, err := json.MarshalIndent(templates, "", "  ")
+	// if err != nil {
+	// 	return "", "", fmt.Errorf("error converting templates to JSON: %v", err)
+	// }
 
-	jsonString := string(templatesJSON)
-	htmlContent := fmt.Sprintf("<html><body><h1>Add some code here</h1><pre>%s</pre></body></html>", jsonString)
+	//jsonString := string(templatesJSON)
+	//fmt.Printf("string : ", jsonString)
+	preview, err := tokenTemplates.GenerateTokenPreview(templates)
+	if err != nil {
+		return "", "", fmt.Errorf("error getting the HTML: %v", err)
+	}
+	//htmlContent := fmt.Sprintf("<html><body><h1>Add some code here</h1><pre>%s</pre></body></html>", preview)
 	hasher := sha256.New()
-	hasher.Write([]byte(htmlContent))
+	hasher.Write([]byte(preview))
 	hashBytes := hasher.Sum(nil)
 	hashString := hex.EncodeToString(hashBytes)
-	return htmlContent, hashString, nil
+	return preview, hashString, nil
 }
 
 func GetProofBasedOnTemplateTxnHashAndTemplateID(id string, txnhash string) (string, error) {

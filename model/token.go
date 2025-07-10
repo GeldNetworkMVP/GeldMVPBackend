@@ -40,3 +40,8 @@ type TokenTransactions struct {
 	TokenID           string             `json:"tokenid" bson:"tokenid"`
 	DBStatus          string             `json:"dbstatus" bson:"dbstatus"`
 }
+
+type TokenPostResult struct {
+	Message string
+	CID     string
+}

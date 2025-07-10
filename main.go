@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/handlers"
-	//"github.com/joho/godotenv"
-	//"github.com/sirupsen/logrus"
+	// "github.com/joho/godotenv"
+	// "github.com/sirupsen/logrus"
 )
 
 // @title			Geld.Network API
@@ -18,6 +18,7 @@ import (
 // @description	This is the Geld.Network Server.
 // @termsOfService	http://swagger.io/terms/
 func main() {
+
 	logs.InfoLogger.Println("Geld Backend")
 	// err := godotenv.Load()
 	// if err != nil {
@@ -29,13 +30,14 @@ func main() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
 	// Start API
 	router := routes.NewRouter()
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	router.Handle("/docs/swagger.yaml", http.FileServer(http.Dir("./")))
 	opts := middleware.SwaggerUIOpts{SpecURL: "/docs/swagger.yaml", Path: "api-docs"}
 	sh := middleware.SwaggerUI(opts, nil)
 	router.Handle("/api-docs", sh)
-
 	http.Handle("/api/", router)
+
 	logs.InfoLogger.Println("Gateway Started @port " + configs.GetPort() + " with " + configs.EnvName + " environment")
 	http.ListenAndServe(configs.GetPort(), handlers.CORS(originsOk, headersOk, methodsOk)(router))
 }
