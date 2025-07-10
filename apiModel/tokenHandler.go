@@ -77,7 +77,7 @@ func SaveToken(W http.ResponseWriter, r *http.Request) {
 						} else {
 							//TODO: check BC Status as well and do a comparison later on
 							newobj := model.TokenTransactions{
-								TransactionStatus: "OnSale",
+								TransactionStatus: "onsale",
 								TokenName:         requestCreateToken.TokenName,
 								TXNHash:           bchash,
 								PlotID:            requestCreateToken.PlotID,
@@ -85,10 +85,14 @@ func SaveToken(W http.ResponseWriter, r *http.Request) {
 								DBStatus:          "Saved",
 							}
 							result1, err2 := businessFacade.SaveTransaction(newobj)
+							tokenSaveResult := model.TokenPostResult{
+								Message: result1,
+								CID:     cid,
+							}
 							if err2 != nil {
 								errors.BadRequest(W, err.Error())
 							} else {
-								commonResponse.SuccessStatus[string](W, result1)
+								commonResponse.SuccessStatus[model.TokenPostResult](W, tokenSaveResult)
 							}
 						}
 					}

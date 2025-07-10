@@ -18,6 +18,7 @@ import (
 // @description	This is the Geld.Network Server.
 // @termsOfService	http://swagger.io/terms/
 func main() {
+
 	logs.InfoLogger.Println("Geld Backend")
 	// err := godotenv.Load()
 	// if err != nil {
@@ -29,6 +30,7 @@ func main() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
 	// Start API
 	router := routes.NewRouter()
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	router.Handle("/docs/swagger.yaml", http.FileServer(http.Dir("./")))
 	opts := middleware.SwaggerUIOpts{SpecURL: "/docs/swagger.yaml", Path: "api-docs"}
@@ -36,8 +38,6 @@ func main() {
 	router.Handle("/api-docs", sh)
 	http.Handle("/api/", router)
 
-	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	logs.InfoLogger.Println("Gateway Started @port " + configs.GetPort() + " with " + configs.EnvName + " environment")
 	http.ListenAndServe(configs.GetPort(), handlers.CORS(originsOk, headersOk, methodsOk)(router))
 }
