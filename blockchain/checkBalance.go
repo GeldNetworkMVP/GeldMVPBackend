@@ -23,5 +23,5 @@ func CheckBalance(publickey string) (string, error) {
 			}
 		}
 	}
-	return "Not Active", fmt.Errorf("something")
+	return "Not active", fmt.Errorf("something")
 }
