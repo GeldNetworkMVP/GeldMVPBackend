@@ -50,7 +50,7 @@ func GetTokenPaginationByStatus(paginationData requestDtos.TokenForMatrixView) (
 	}
 	projection := GetProjectionDataMatrixViewForTokenData()
 	var data []model.Tokens
-	response, err := tokensRepository.GetTokensPaginatedResponseByStatus(filter, projection, paginationData.PageSize, paginationData.RequestedPage, "tokens", "bcstatus", data, paginationData.SortType)
+	response, err := tokensRepository.GetTokensPaginatedResponseByStatus(filter, projection, paginationData.PageSize, paginationData.RequestedPage, "tokens", "_id", data, paginationData.SortType)
 	if err != nil {
 		logs.ErrorLogger.Println("Error occurred :", err.Error())
 		return model.TokenPaginatedresponse(response), err

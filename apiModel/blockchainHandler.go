@@ -65,6 +65,7 @@ func CheckBalance(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errors.BadRequest(w, err.Error())
 	}
+	fmt.Println("result: ", result)
 	if result == "No Balance" {
 		response, err := businessFacade.FundAccount(vars["publickey"])
 		if err != nil {
@@ -72,6 +73,20 @@ func CheckBalance(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.Header().Set("Content-Type", "application/json")
 			err := json.NewEncoder(w).Encode(response)
+			if err != nil {
+				fmt.Fprintf(w, "Error encoding response: %v", err)
+				return
+			}
+		}
+	} else if result == "Not active" {
+		fmt.Println("here ", vars["publickey"])
+		result, err := businessFacade.ActivateNewAccount(vars["publickey"])
+		if err != nil {
+			errors.BadRequest(w, err.Error())
+			return
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+			err := json.NewEncoder(w).Encode(result)
 			if err != nil {
 				fmt.Fprintf(w, "Error encoding response: %v", err)
 				return

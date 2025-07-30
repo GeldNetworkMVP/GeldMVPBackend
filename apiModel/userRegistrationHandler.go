@@ -315,26 +315,43 @@ func UserSignIn(w http.ResponseWriter, r *http.Request) { //request-body
 		errors.BadRequest(w, err.Error())
 		return
 	} else {
-		result, err := businessFacade.GetUserEncPW(userObj.Email)
-		if err != nil {
-			logs.WarningLogger.Println("Failed to get users : ", err.Error())
+		userstatus, errstatus := businessFacade.GetUserExistence(userObj.Email)
+		if errstatus != nil {
+			logs.WarningLogger.Println("Failed to get user status : ", err.Error())
 			errors.BadRequest(w, err.Error())
 			return
 		} else {
-			bytepw := result.EncPW
-			pw := commons.Decrypt(bytepw)
-			if pw == userObj.Pw {
-				token, err := commons.GenerateTokenForUser(userObj.Email)
+			if userstatus.Status == "accepted" {
+				result, err := businessFacade.GetUserEncPW(userObj.Email)
 				if err != nil {
-					logs.WarningLogger.Println("Failed to generate tokens : ", err.Error())
+					logs.WarningLogger.Println("Failed to get users : ", err.Error())
 					errors.BadRequest(w, err.Error())
 					return
 				} else {
-					objectIdString := result.AppUserID.Hex()
-					json.NewEncoder(w).Encode(map[string]string{"token": token, "email": result.Email, "contact": result.Contact, "designation": result.Designation, "company": result.Company, "userid": objectIdString})
+					bytepw := result.EncPW
+					pw := commons.Decrypt(bytepw)
+					if pw == userObj.Pw {
+						token, err := commons.GenerateTokenForUser(userObj.Email)
+						if err != nil {
+							logs.WarningLogger.Println("Failed to generate tokens : ", err.Error())
+							errors.BadRequest(w, err.Error())
+							return
+						} else {
+							objectIdString := result.AppUserID.Hex()
+							json.NewEncoder(w).Encode(map[string]string{"token": token, "email": result.Email, "contact": result.Contact, "designation": result.Designation, "company": result.Company, "userid": objectIdString})
+						}
+					} else {
+						logs.WarningLogger.Println("Failed validate password")
+						errors.BadRequest(w, err.Error())
+						return
+					}
 				}
+			} else if userstatus.Status == "pending" {
+				logs.WarningLogger.Println("User is pending approval")
+				errors.BadRequest(w, err.Error())
+				return
 			} else {
-				logs.WarningLogger.Println("Failed validate password")
+				logs.WarningLogger.Println("User has been rejected")
 				errors.BadRequest(w, err.Error())
 				return
 			}

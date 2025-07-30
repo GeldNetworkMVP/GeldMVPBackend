@@ -4,6 +4,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type UpdateUser struct {
 	AppUserID primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Company   string             `json:"company" bson:"company"`
 	// AdminUserID string             `json:"userid" bson:"userid"`
 	Email       string `json:"email" bson:"email"`
 	Contact     string `json:"contact" bson:"contact"`
